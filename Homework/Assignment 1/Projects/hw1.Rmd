@@ -1,0 +1,64 @@
+---
+title: "Homework Assignment 1"
+output: html_notebook
+---
+
+The instructions for the RNotebook are as follows:
+
+* create a 5 by 10 matrix of random integers
+
+* define column names as cond1, cond2, cond3, cond4, cond5, ctrl1, ctrl2, ctrl3, ctrl4, ctrl5
+
+* define row names as gene1, gene2, gene3 ...
+
+* Compute the fold change for each gene.
+
+```{r}
+library(DESeq2)
+library(pheatmap)
+
+# Generate fake data via sampling
+data <- base::matrix(
+  data = sample(1:100, 5 * 10, replace=TRUE),
+  ncol = 10,
+  dimnames = list(
+    c("gene1", "gene2", "gene3", "gene4", "gene5"),
+    c("cond1", "cond2", "cond3", "cond4", "cond5", 
+      "ctrl1", "ctrl2", "ctrl3", "ctrl4", "ctrl5")
+    )
+)
+
+# Indicate the conditioned and control data.
+condition <- base::factor(c(
+  "COND",
+  "COND",
+  "COND",
+  "COND",
+  "COND",
+  "CTRL",
+  "CTRL",
+  "CTRL",
+  "CTRL",
+  "CTRL"))
+
+# Create the dataset
+dataset <- DESeq2::DESeqDataSetFromMatrix(
+  countData = data,
+  DataFrame(condition),
+  ~ condition
+)
+
+# Run the analysis
+dataset <- DESeq2::DESeq(
+  dataset,
+  fitType='mean' # Arbitrarily chosen as data is random numbers
+)
+
+# Retrieve results
+result_table <- DESeq2::results(dataset)
+
+# Retrieve fold change results
+fold_change <- result_table[["log2FoldChange"]]
+fold_change
+```
+
