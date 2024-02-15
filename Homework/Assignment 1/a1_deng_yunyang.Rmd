@@ -1,0 +1,403 @@
+---
+title: "BCB420 Assignment #1: Data set selection and initial Processing"
+output:
+  html_notebook:
+    toc: yes
+bibliography: references.bib
+---
+
+```{r}
+library("GEOquery")
+library("knitr")
+library("edgeR")
+library("biomaRt")
+library("stringr")
+library("limma")
+```
+
+# BCB420 Assignment #1: Data Set Selection and Initial Processing
+
+By: Yunyang Harrison Deng
+
+## Data set's Importance
+
+This data set is of particular interest to me since I have previously worked on multiple projects on the topic of HIV. However, up until this point, I have not gotten the opportunity to perform computational analysis with expression data sets so reading the paper, working with the data is all very novel and interesting to me. Furthermore, the data set was produced for a study regarding elite controllers, those that have previously been exposed to HIV, but is able to maintain an undetectable viral load without any form of treatment for years. This discussion for elite controllers is especially interesting for me since I have ongoing projects looking into natural resistance to HIV and immune escape mechanisms on the genetics level. However, expression data could be beneficial in not only corroboration, but isolation in which factors to look at at the genetics level.
+
+## Variables of Data Set
+
+The data set contains various conditions to stratify and categorize data based on. Importantly, the following analysis will focus on the phenotype category which contains antiretroviral therapy (ART) patient sample, elite controller patient sample where no plasma viremia was detected (EC), or viremic control where very low levels of viremia was detected (VC). For the purposes of this analysis, we will use ART patient samples as the control to see if there are differences between how spontaneous controllers react to HIV versus the artificial treatment patients react [@collinsCytolyticCD8Cells2023].
+
+## Loading the Data
+
+We will begin by downloading the data with use of the GEOquery library.
+
+### Fetching GEO Data
+
+```{r message=FALSE}
+data_set_geoid <- "GSE196549"
+gse <- getGEO(data_set_geoid ,GSEMatrix=FALSE) # Fetches GEO SOFT and parses.
+gse@header$summary
+```
+
+Seeing as the data is downloaded correctly, we can check the information regarding the platform used to generate the data.
+
+```{r message=FALSE}
+current_gpl <- names(GPLList(gse))
+current_gpl_info <- Meta(getGEO(current_gpl))
+```
+
+-   Platform title: `r current_gpl_info$title`
+-   Submission date: `r current_gpl_info$submission_date`
+-   Last update: `r current_gpl_info$last_update_date`
+-   Organisms: `r current_gpl_info$organism`
+-   Number of GEO datasets using this platform: `r length(current_gpl_info$series_id)`
+-   Number of GEO samples that use this technology: `r length(current_gpl_info$sample_id)`
+
+Next, we'll take a quick look at the processing methodology information embedded in the individual sample records:
+
+```{r}
+for (info in gse@gsms[[1]]@header$data_processing) {
+  print(info)
+}
+```
+
+### Fetching Study Supplementary Files
+
+Then, we'll download all discovered supplementary files again using GEOQuery [@davisGEOqueryBridgeGene2007].
+
+```{r message=TRUE}
+
+# Get all known supplementary file information.
+sfilenames = getGEOSuppFiles(data_set_geoid, fetch_files = FALSE)
+sfilenames$fname
+
+# Download location
+download_dir <- file.path(file.path(getwd(), "expression_data"))
+if (!dir.exists(download_dir)) {
+  dir.create(download_dir) # Create folder if it doesn't exist.
+}
+
+# Figure out which files are missing
+missing_files <- sfilenames$fname[!unlist(
+  lapply(
+    sfilenames$fname, FUN=function(x){
+      file.exists(file.path(download_dir,data_set_geoid,x))
+    }
+  )
+)]
+
+if(length(missing_files) >0){
+  for(i in 1:length(missing_files)) {
+    #get the supplementary files
+    sfiles = getGEOSuppFiles(data_set_geoid,
+      filter_regex = missing_files[i],
+      baseDir = download_dir,
+      fetch_files = TRUE)
+  }
+}
+
+```
+
+### Fetching Sample Metadata
+
+The metadata here contains all the information regarding each samples. Data is displayed using knitr [@xieKnitrComprehensiveTool2014].
+
+```{r}
+controller_vs_art_metadata <- read.table(
+  file.path(download_dir,data_set_geoid, "GSE196549_GEO.metadata.tsv.gz"),
+  header=TRUE,
+  check.names=TRUE
+  )
+controller_vs_art_metadata <- controller_vs_art_metadata[,-c(1)] # Delete duplicate column
+row.names(controller_vs_art_metadata) <- controller_vs_art_metadata[,1]
+dim(controller_vs_art_metadata)
+kable(controller_vs_art_metadata[1:8,], format = "html")
+```
+
+Note that there are 3 replicates for each patient. Replicates were consistent across all patients and contributed to the reliability of the data and therefore not manually removed.
+
+### Fetching Sample Data
+
+```{r}
+controller_vs_art_expr <- read.table(
+  file.path(download_dir,data_set_geoid, "GSE196549_R1015R1200.FILT.EC.tsv.gz"),
+  header=TRUE,
+  check.names=TRUE
+)
+row.names(controller_vs_art_expr) <- controller_vs_art_expr$X
+controller_vs_art_expr <- controller_vs_art_expr[-c(1)]
+dim(controller_vs_art_expr)
+kable(controller_vs_art_expr[1:8,1:4], format = "html")
+```
+
+Dataset chosen based on the information provided when looking at the materials and methods information above.
+
+### Checking for Identical Expression Values
+
+```{r}
+duplicated_expression_select <- duplicated(controller_vs_art_expr)
+duplicated_expressions <- controller_vs_art_expr[duplicated_expression_select,]
+kable(duplicated_expressions, format = "html")
+```
+
+We see several duplicated expressions here. We will remove them.
+
+```{r}
+controller_vs_art_expr <- controller_vs_art_expr[!duplicated_expression_select,]
+dim(controller_vs_art_expr)
+kable(controller_vs_art_expr[1:8,1:4], format = "html")
+```
+
+## Overview of Data
+
+The following shows the different number of samples for the different sample sources.
+
+```{r}
+controller_vs_art_metadata <- data.table::data.table(controller_vs_art_metadata)
+controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Source]
+```
+
+The following shows the different number of samples for the different phenotypes.
+
+```{r}
+controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Phenotype]
+```
+
+## Visualizing Expression Data
+
+### Expression Level Distribution Across Samples
+
+Visualizing data via comparing centers with use of Boxplots.
+
+```{r warning=FALSE}
+log_controller_vs_art_expr <- log2(controller_vs_art_expr) # Log2 all expression counts
+
+center_deviation_plot <- function(graphed_data, title) {
+  boxplot(graphed_data, xlab = "Samples", ylab = "Log2 Expr.",
+  las = 2, cex = 0.5, cex.lab = 0.5,
+  cex.axis = 0.5, main = title)
+
+  abline(
+    h = median(apply(graphed_data, 2, median)),
+    col = "darkred",
+    lwd = 1,
+    lty = "dashed"
+  )
+}
+
+center_deviation_plot(log_controller_vs_art_expr, "CD8+ T Cell Gene Expression in HIV Patients")
+```
+
+These series of boxplots shows the distribution of expressions across all genes and the skew of the data for each sample taken. The darkgreen line shows the median across all the data points. To elaborate, horizontally, each sample is presented and labelled. Vertically is the $log_2$ of the expression levels for the variety of genes.
+
+From this, we can see that there are a few samples that have wildly different expression distributions compared to others. This could indicate minor errors or noise in the data whether this be technically introduced or biological cause.
+
+### Density
+
+Continuing visualization with density plot.
+
+```{r}
+# TODO check labels
+
+density_plot <- function(graphed_data, title) {
+  counts_density <- apply(log2(graphed_data), 2, density)
+  #calculate the limits across all the samples
+  xlim <- 0; ylim <- 0
+  for (i in 1:length(counts_density)) {
+    xlim <- range(c(xlim, counts_density[[i]]$x));
+    ylim <- range(c(ylim, counts_density[[i]]$y))
+  }
+
+  cols <- rainbow(length(counts_density))
+  ltys <- rep(1, length(counts_density))
+
+  #plot the first density plot to initialize the plot
+  plot(counts_density[[1]], xlim=xlim, ylim=ylim, type="n",
+    ylab="Smoothing density of log2-CPM",
+    main=title, cex.lab = 0.85)
+
+  #plot each line
+  for (i in 1:length(counts_density))
+    lines(counts_density[[i]], col=cols[i], lty=ltys[i])
+
+  #create legend
+  legend("topright", colnames(graphed_data),
+    col=cols, lty=ltys, cex=0.75,
+    border ="blue", text.col = "green4",
+    merge = TRUE, bg = "gray90")
+}
+
+density_plot(controller_vs_art_expr, "Expression Density Curve")
+```
+
+This density plot shows the density of different $log_2$ expression levels for different genes where the smoothed density is displayed on the vertical axis and the value corresponding to the density is shown on the horizontal axis. The different colours represent the different samples.
+
+From this visualization, we can see there seems to be certain levels of expression that have a relatively larger variance between different samples. This ultimately agrees with the previous boxplot result in that there may be noise in these regions.
+
+## Filtering the dataset
+
+We will begin attempting to clean up the variations seen in the data across different samples by requiring a minimum of $30$ samples where the CPM of the expression value is greater than $1$.
+
+```{r}
+min_num_samples <- 30
+data_matrix <- as.matrix(controller_vs_art_expr)
+
+# get rid of low counts
+filtered_controller_vs_art_expr = data_matrix[
+  rowSums(cpm(data_matrix) >1) > min_num_samples
+,]
+
+par(mfrow=c(1, 2))
+density_plot(controller_vs_art_expr, "Original")
+density_plot(filtered_controller_vs_art_expr, "After Filtering")
+par(mfrow=c(1, 1))
+```
+
+By doing so, we see we've reduced the variation at the points where there is an increase in differences between different samples in terms of expression level density. However, there is still quite a bit of variation in general in terms of density distribution across samples. A total of `r nrow(controller_vs_art_expr) - nrow(filtered_controller_vs_art_expr)` was removed due to filtering. The exact statistical method of removing outliers was not described in detail by the original paper [@collinsCytolyticCD8Cells2023].
+
+## Applying TMM
+
+We will now apply trimmed mean of m-values or TMM to normalize the data further.
+
+```{r}
+d <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
+d <- calcNormFactors(d)
+normed_controller_vs_art <- cpm(d)
+```
+
+```{r}
+par(mfrow=c(2, 2))
+density_plot(filtered_controller_vs_art_expr, "Original")
+density_plot(normed_controller_vs_art, "TMM")
+center_deviation_plot(log2(filtered_controller_vs_art_expr), "Original")
+center_deviation_plot(log2(normed_controller_vs_art), "TMM")
+par(mfrow=c(1, 1))
+```
+
+Completing the TMM show a vast improvement in terms of variation in distribution of expression levels and the centers of the expression levels.
+
+## Sample Difference visualization
+
+We can visualize the difference between samples via plotting them on a multidimensional scaling (MDS) plot.
+
+To start, we will color the points first based on the source of the sample. The MDS plot will be generated using the limma package [@ritchieLimmaPowersDifferential2015].
+
+```{r}
+
+plotMDS(d, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
+legend("topright",
+  legend=levels(factor(controller_vs_art_metadata$Source)),
+  pch=c(1), col= c("red","blue"),title="Class",
+  bty = 'n', cex = 0.75)
+```
+
+Looking at the data categorized by source, we see no substantial differences between the sources in that where there are lymph node (LN) samples, there are also peripheral blood (PB) samples in a similar area.
+
+To continue, let's color based on the phenotype of the sample.
+
+```{r}
+
+plotMDS(d, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
+legend("topright",
+  legend=levels(factor(controller_vs_art_metadata$Phenotype)),
+  pch=c(1), col=
+c("red","orange","purple"),title="Class",
+  bty = 'n', cex = 0.75)
+
+```
+
+In stark contrast, to the previous color categories, it seems that there are forms of clusters between ART and EC. Furthermore, a large portion of the viremic controllers are also clustered by themselves apart from the other two clusters. Lastly, there exists a third cluster comprised of samples from EC patients, and controls.
+
+Based on this, there seems to be a group of EC that have very similar expression levels compared to patients on ART, however, there may be another group of patients that are categorically elite controllers that have similar gene expressions as a small portion of the viremic control results. This could indicate that there are biological variables that are not captured by this experiment which differentiate the control and the EC.
+
+Interpreting results was based on separate review material [@fullerMolecularClassificationHuman2002].
+
+### Dispersion Analysis
+
+Shows the variability of gene expression relative to the mean for a given counts per million (CPM). Biological Coefficient of Variation (BCV) was plotted with edgeR [@chenEdgeRPowerfulDifferential2024].
+
+```{r}
+model_design <- model.matrix(~controller_vs_art_metadata$Phenotype+controller_vs_art_metadata$Source)
+d <- estimateDisp(d, model_design)
+plotBCV(d, col.tagwise = "black",col.common = "red",)
+```
+
+The produced figure indicates that for more highly expressed genes, the biological coefficient of variation decreases. This trend only seems to occur after approximately 3 $\logCPM$. This may further be interpreted to indicating there is a decrease in the number of differential genes as the expression counts increase. The following plot was generated with use of edgeR [@chenEdgeRPowerfulDifferential2024].
+
+```{r}
+plotMeanVar(d, show.raw.vars = TRUE,
+  show.tagwise.vars=TRUE, NBline=TRUE,
+  show.ave.raw.vars = TRUE,show.binned.common.disp.vars
+= TRUE)
+```
+
+This figure confirms the assumption that the data follows the negatively binomial distribution much closely. The blue line shows the negative binomial distribution.
+
+## (Re)Mapping HUGO Symbols
+
+We will remap all given Ensembl Stable IDs to HUGO maps to ensure IDs are correct. Parsing given naming scheme will require use of stringr [@wickhamStringrSimpleConsistent2023]. Fetching based on Stable Ensembl gene IDs to retrieve HUGO symbols will be done through the biomaRt package [@durinckBioMartBioconductorPowerful2005].
+
+```{r}
+
+ensembl = useDataset("hsapiens_gene_ensembl",mart=useMart("ensembl"))
+
+
+ids2convert <- lapply(rownames(normed_controller_vs_art), FUN = function(x) {
+  return(unlist(str_split(x, "_"))[[1]])
+})
+
+rownames(normed_controller_vs_art) <- ids2convert
+
+conversion_cache <- "id_conversion.rds"
+
+conversion_cache_file <- "id_conversion.rds"
+if (file.exists(conversion_cache_file)) {
+  id_conversion <- readRDS(conversion_cache_file)
+} else {
+  id_conversion <- getBM(attributes =
+    c("ensembl_gene_id","hgnc_symbol"),
+    filters = c("ensembl_gene_id"),
+    values = unlist(ids2convert),
+    mart = ensembl
+  )
+  saveRDS(id_conversion, conversion_cache_file)
+}
+
+reannot_norm_controller_vs_art <- merge(
+  x = id_conversion,
+  y = normed_controller_vs_art,
+  by.x = 1,
+  by.y = 0,
+  all.y = TRUE
+)
+
+kable(reannot_norm_controller_vs_art[1:8,1:8], format = "html")
+```
+
+There were a few symbols that were not successfully matched. Let's take a look.
+
+```{r}
+missing_hugo_norm_controller_vs_art <- reannot_norm_controller_vs_art[
+  is.na(reannot_norm_controller_vs_art$hgnc_symbol),
+]
+kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
+```
+
+Future development of such a study may involve investigating the ID mappings, how they changed and for what reasons.
+
+## Additional Notes
+
+-   Most `kable` displayed tables have been cropped due to relatively large amounts of data.
+-   There does seem to be a discrepancy between provided supplementary materials and samples noted as part of the original paper.
+-   "Why is the data set of interest to you?" at [Data set's Importance].
+-   "What are the control and test conditions of the dataset?" at [Variables of Data Set].
+-   "How many samples in each of the conditions of your dataset?" at [Overview of Data].
+-   "Were there expression values that were not unique for specific genes? How did you handle these?" at [Checking for Identical Expression Values].
+-   "Were there expression values that could not be mapped to current HUGO symbols?" at [(Re)Mapping HUGO Symbols].
+-   "Were there any outliers in your dataset? How were they handled in the originating paper? How many outliers were removed?" at [Filtering the dataset].
+-   "How did you handle replicates?" at [Fetching Sample Metadata].
+
+# References
+
+::: {#refs}
+:::
