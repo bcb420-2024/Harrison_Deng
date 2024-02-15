@@ -257,7 +257,7 @@ By doing so, we see we've reduced the variation at the points where there is an 
 
 ## Applying TMM
 
-We will now apply trimmed mean of m-values or TMM to normalize the data further.
+We will now apply trimmed mean of m-values or TMM to normalize the data further. We choose to apply TMM as we expect that most genes are not differentially. expressed. Furthermore, as the process to procure this data contains many technically based areas of potentially introducing variation, TMM may help by trimming off extreme values likely caused by technical variation.
 
 ```{r}
 d <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
