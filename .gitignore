@@ -97,7 +97,7 @@ rsconnect/
 
 ## Ignore cached
 
-Homework/**/expression_data/GSE196549
+Homework/**/expression_data/*
 Homework/**/*.rds
 Homework/**/*.RData
 Homework/**/g_profiler

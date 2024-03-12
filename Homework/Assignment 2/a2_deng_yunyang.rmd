@@ -374,11 +374,12 @@ max_term_size <- 250
 
 
 I chose to use a list of upregulated and downregulated genes that was restricted 
-based off the previously used `r alpha` values as thresholds. The upregulation 
-and downregulation were also previously determined by the the `r signif_expr` 
-variable. The gene lists produced as a product of such thresholds and previous 
-gene expression analysis was used as a query set for 
-[g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) programmatically and the 
+based off the previously used `r alpha` values as thresholds. Thresholding was 
+selected due the size of the dataset as well as well as the basis in terms of 
+statistics. The upregulation and downregulation were also previously determined 
+by the the `r signif_expr` variable. The gene lists produced as a product of 
+such thresholds and previous gene expression analysis was used as a query set 
+for [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) programmatically and the 
 results were returned and further filtered by setting an upper bound on term 
 size by `r max_term_size`. P-values are adjusted for multiple testing via FDR.
 Parameters can be seen below. 
@@ -497,7 +498,8 @@ str(get_version_info(organism = organism))
 > 3. How many genesets were returned with what thresholds?
 
 All term sizes were capped at `r max_term_size` and adjusted p-values were 
-capped at `r alpha`.
+capped at `r alpha`. The max term size was chosen to reduce highly 
+broad-covering pathways. The alpha value choice was previously described.
 
 Upregulated significant genes enrichment analysis as follows.
 
@@ -570,14 +572,6 @@ various pathways than any individual. Furthermore, for the same reason, there
 are many more results where the range of possible intersection sizes is 
 increased and the relative number of larger term sizes may also be increased.
 
-Diving into the specifics, we can see there is an upregulation of various immune
-cell differentiation. This corroborates the general theory that the virus has 
-some capacity to surpress the operations of the immune 
-system [@dengSuppressionNFkBActivity2018]. In terms of down-regulation, several 
-pathways associated with the lifecycle of a cell have very large intersections 
-and highly significant p-values. This is also a known effect of HIV-1 and has 
-been previously studied [CITE].
-
 
 > Additional Notes: Present your results with the use of tables and screenshots. 
 > All figures should have appropriate figure legends.
@@ -602,10 +596,18 @@ differentiation pathways to T-cell activation pathways.
 > 2. Can you find evidence, i.e. publications, to support some of the results 
 that you see. How does this evidence support your results.
 
-There exists various studies supporting what we see in terms of the expression 
-level changes of various genes, and their associated participations in pathways.
-Some of these, I've already documented near the end of the previous section when
-looking over results.
+Diving into the specifics, we can see there is an upregulation of various immune
+cell differentiation. This corroborates the general theory that the virus has 
+some capacity to surpress the operations of the immune 
+system [@dengSuppressionNFkBActivity2018].
+
+In terms of down-regulation, several 
+pathways associated with the lifecycle of a cell have very large intersections 
+and highly significant p-values. This is also a known effect of HIV-1 and has 
+been previously studied [@piekna-przybylskaCD4MemoryCells2018]. Furthermore, the 
+results obtained seem to indicate various regulations in mRNA machinery are 
+downregulated. This is also a well known effect with various papers citing as 
+such [@toro-ascuyInteractionsHIV1Unspliced2016; @wangRoleRNAModification2022].
 
 # Additional Notes
 
