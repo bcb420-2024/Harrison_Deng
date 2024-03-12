@@ -2,7 +2,10 @@
 title: "Assignment 2"
 author: "Harrison Deng"
 date: "`r Sys.Date()`"
-output: html_notebook
+output: 
+  html_notebook:
+    toc: yes
+bibliography: references.bib
 ---
 
 ```{r message=FALSE}
@@ -13,13 +16,15 @@ library("stringr")
 library("limma")
 library("ggplot2")
 library("ComplexHeatmap")
-library("circlize")
-library("GSA")
 library("gprofiler2")
+library("circlize")
 library("data.table")
 ```
 
-Loading environment from assignment 1.
+Loading environment from assignment 1. We will use the `knitr` package to do so 
+[@xieKnitrGeneralPurposePackage2023].
+By doing so, we will inherently include all packages used in assignment 1. 
+Refer to assignment 1 for references on those packages.
 
 ```{r message=FALSE}
 if (basename(getwd()) == "Homework") {
@@ -145,9 +150,16 @@ expressions may be linked to HIV severity outcome, we will elect to look at the
 phenotype category more. Additionally, since single patients have multiple 
 samples that are also relatively clustered together, we'll look at those.
 
+All figures above were generated via use of the `limma` package 
+[@ritchieLimmaPowersDifferential2015].
+
 > 2. Multiple hypothesis testing - correct your p-values using a multiple 
 > hypothesis correction method. Which method did you use? And Why? How many 
 > genes passed correction?
+
+Throughout the gene expression analysis and specifically, the fitting and 
+testing of the genewise negative binomial generalized linear models, `EdgeR`
+functions will be used [@chenEdgeRPowerfulDifferential2024].
 
 We will begin by creating design pattern matrix for the model and fitting the 
 expression matrix to the design pattern.
@@ -313,6 +325,9 @@ previously mentioned $310817$ ART than the general VC set of patients and genes.
 This corroborates the results seen by the MDS plots where we have some 
 intersections between the different phenotypes.
 
+This heatmap was generated with use of the library `ComplexHeatmap` 
+[@guComplexHeatmapVisualization2022].
+
 > Make sure all your figures have proper heading and labels. Every figure  
 > included in the report should have a detailed figure legend.
 
@@ -368,6 +383,9 @@ results were returned and further filtered by setting an upper bound on term
 size by `r max_term_size`. P-values are adjusted for multiple testing via FDR.
 Parameters can be seen below. 
 
+IDs will be used from the given dataset and parsed with help from the `stringr` 
+library [@wickhamStringrSimpleConsistent2023a]. 
+
 ```{r}
 qlf_art_vs_ec_results$hgnc_symbol <- lapply(row.names(qlf_art_vs_ec_results), FUN = function(x) {
   return(unlist(str_split(x, "_"))[[2]])
@@ -399,7 +417,9 @@ sep = "\n",row.names = FALSE,
 col.names = FALSE,quote = FALSE)
 ```
 
-The next steps involve running g:Profiler programmatically via R.
+The next steps involve running g:Profiler programmatically via R. We will try to 
+cache the results when possible with use of the `data.table` library 
+[@barrettDataTableExtension2024].
 
 ```{r}
 
@@ -552,13 +572,50 @@ increased and the relative number of larger term sizes may also be increased.
 
 Diving into the specifics, we can see there is an upregulation of various immune
 cell differentiation. This corroborates the general theory that the virus has 
-some capacity to surpress the operations of the immune system.
+some capacity to surpress the operations of the immune 
+system [@dengSuppressionNFkBActivity2018]. In terms of down-regulation, several 
+pathways associated with the lifecycle of a cell have very large intersections 
+and highly significant p-values. This is also a known effect of HIV-1 and has 
+been previously studied [CITE].
+
 
 > Additional Notes: Present your results with the use of tables and screenshots. 
 > All figures should have appropriate figure legends.
 >
 > If using figures create a figures directory in your repo and make sure all 
 > references to the figures are relative in your Rmarkdown notebook.
+
+# Interpretation
+
+The assignment outline requires the following.
+
+> 1. Do the over-representation results support conclusions or mechanism 
+> discussed in the original paper?
+
+Yes, the over-representation results support the general conclusions discussed 
+in the original paper. To elaborate, the paper specifically discusses the 
+increase of CD8+ T cells within germinal centers 
+[@collinsCytolyticCD8Cells2023]. This corresponds with the several up-regulation 
+of positive regulation pathways of T-cells. This ranges from T-cell 
+differentiation pathways to T-cell activation pathways. 
+
+> 2. Can you find evidence, i.e. publications, to support some of the results 
+that you see. How does this evidence support your results.
+
+There exists various studies supporting what we see in terms of the expression 
+level changes of various genes, and their associated participations in pathways.
+Some of these, I've already documented near the end of the previous section when
+looking over results.
+
+# Additional Notes
+
+- Throughout this notebook, `knitr` will be used for the displaying of tables 
+[@xieKnitrGeneralPurposePackage2023].
+- Throughout this notebook, `ggplot2` will be used for the generation of figures 
+[@wickhamGgplot2ElegantGraphics2016].
+- Coloring associated functions were largely obtained and used from the `circlize` 
+library [@guCirclizeImplementsEnhances2014].
+
 
 # References
 
