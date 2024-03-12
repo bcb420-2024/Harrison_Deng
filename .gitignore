@@ -99,3 +99,6 @@ rsconnect/
 
 Homework/**/expression_data/GSE196549
 Homework/**/*.rds
+Homework/**/*.RData
+Homework/**/g_profiler
+Homework/**/regulated_genes

@@ -5,26 +5,41 @@ date: "`r Sys.Date()`"
 output: html_notebook
 ---
 
-```{r}
+```{r message=FALSE}
 library("GEOquery")
 library("knitr")
 library("edgeR")
 library("stringr")
 library("limma")
+library("ggplot2")
+library("ComplexHeatmap")
+library("circlize")
+library("GSA")
+library("gprofiler2")
+library("data.table")
 ```
 
 Loading environment from assignment 1.
 
-```{r}
+```{r message=FALSE}
 if (basename(getwd()) == "Homework") {
   setwd("./Assignment 2")
 }
-part_a1_dir <- file.path(dirname(getwd()), "Assignment 1")
-part_a1_filename <- "a1_deng_yunyang.Rmd"
-part_a1_out <- "a1_deng_yunyang.nb.html"
+preprocessed_workspace_path <- "preprocessed_workspace.RData"
+if (exists("n_ctrl_vs_art")) {
+  # Then continue
+} else if (file.exists(preprocessed_workspace_path)) {
+  print("Loaded from file cache.")
+  load(preprocessed_workspace_path)
+} else {
+  part_a1_dir <- file.path(dirname(getwd()), "Assignment 1")
+  part_a1_filename <- "a1_deng_yunyang.Rmd"
+  part_a1_out <- "a1_deng_yunyang.nb.html"
 
-knit(file.path(part_a1_dir, part_a1_filename),
-     output = file.path(getwd(), part_a1_out))
+  knit(file.path(part_a1_dir, part_a1_filename),
+       output = file.path(getwd(), part_a1_out))
+  save.image(preprocessed_workspace_path)
+}
 ```
 
 # Summary 
@@ -73,34 +88,21 @@ that the data largely follows the negative binomial distribution.
 
 # Gene Expression Differential Analysis
 
-This section will contain steps for the following (take from the assignment 
-outline):
-
-1. Calculate p-values for each of the genes in your expression set. How many 
-genes were significantly differentially expressed? What thresholds did you use 
-and why?
-
-2. Multiple hypothesis testing - correct your p-values using a multiple 
-hypothesis correction method. Which method did you use? And Why? How many genes 
-passed correction?
-
-3. Show the amount of differentially expressed genes using an MA Plot or a 
-Volcano plot. Highlight genes of interest.
-
-4. Visualize your top hits using a heatmap. Do you conditions cluster together? 
-Explain why or why not.
-
-Make sure all your figures have proper heading and labels. Every figure included 
-in the report should have a detailed figure legend.
-
-## Calculating P-Values
+> 1. Calculate p-values for each of the genes in your expression set. How many 
+> genes were significantly differentially expressed? What thresholds did you use 
+> and why?
 
 Let's review the data we have currently from assignment 1 (filtered and 
 normalized).
 
 ```{r}
-kable(normed_controller_vs_art[1:8, 1:8])
-t(controller_vs_art_metadata[1,])
+kable(
+  n_ctrl_vs_art[1:5, 1:4],
+  type = "html",
+  caption = "Sample of Pre-processed Gene Expression Data Format"
+)
+
+t(art_v_ec_meta[1, ])
 ```
 
 Recall that samples are the columns and rows are the genes. Next, we will look 
@@ -123,12 +125,12 @@ phenotype_dge_mds_by <- function(classification_var, title, dge) {
 }
 
 par(mfrow = c(2, 3))
-phenotype_dge_mds_by(controller_vs_art_metadata$Patient, "Patient", phenotype_dge)
-phenotype_dge_mds_by(controller_vs_art_metadata$Phenotype, "Phenotype", phenotype_dge)
-phenotype_dge_mds_by(controller_vs_art_metadata$Source, "Phenotype", phenotype_dge)
-phenotype_dge_mds_by(controller_vs_art_metadata$Sex, "Phenotype", phenotype_dge)
-phenotype_dge_mds_by(controller_vs_art_metadata$Race, "Phenotype", phenotype_dge)
-phenotype_dge_mds_by(controller_vs_art_metadata$Age, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Patient, "Patient", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Phenotype, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Source, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Sex, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Race, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(art_v_ec_meta$Age, "Phenotype", phenotype_dge)
 par(mfrow = c(1, 1))
 ```
 
@@ -140,38 +142,425 @@ phenotype also seems rather distinct and forms interesting intersections with
 each other. Since we are interested in the associations between gene expression 
 and phenotypic outcome, that is to say, we are interested in how gene 
 expressions may be linked to HIV severity outcome, we will elect to look at the 
-phenotype category more.
+phenotype category more. Additionally, since single patients have multiple 
+samples that are also relatively clustered together, we'll look at those.
+
+> 2. Multiple hypothesis testing - correct your p-values using a multiple 
+> hypothesis correction method. Which method did you use? And Why? How many 
+> genes passed correction?
+
+We will begin by creating design pattern matrix for the model and fitting the 
+expression matrix to the design pattern.
 
 ```{r}
-model_design_pat <- model.matrix(~ controller_vs_art_metadata$Phenotype)
-model_design_pat
+model_design_pat <- model.matrix(~ art_v_ec_meta$Patient + art_v_ec_meta$Phenotype)
 
-fit_phenotype_dge <- glmQLFit(phenotype_dge, model_design_pat)
+model_design_pat[1:5,]
+
+fit_phenotype_glmQL <- glmQLFit(phenotype_dge, model_design_pat)
 ```
 
 Specifically, the reference category will be the ART samples while we will test 
 the elite controllers.
 
 ```{r}
-coefficent_col <- "controller_vs_art_metadata$PhenotypeEC"
+coefficent_col <- "art_v_ec_meta$PhenotypeEC"
 
-qlf.ARTvsEC  <- glmQLFTest(fit_phenotype_dge, coef = coefficent_col)
+qlf.ARTvsEC  <- glmQLFTest(fit_phenotype_glmQL, coef = coefficent_col)
 
-qlf_output_hits <- topTags(qlf.ARTvsEC, sort.by = "PValue",
-                           n = nrow(normed_controller_vs_art))
+qlf_art_vs_ec_results <- topTags(qlf.ARTvsEC, sort.by = "PValue",
+                           n = nrow(n_ctrl_vs_art))$table
+qlf_art_vs_ec_results$logFDR <- -log2(qlf_art_vs_ec_results$FDR)
+
+kable(
+  qlf_art_vs_ec_results[1:10,],
+  row.names = TRUE,
+  type = "html",
+  caption = "Top 10 Significant Gene Expr. Change In Elite Controllers"
+)
 ```
 
 We will let $\alpha = 0.05$. Thus, the following demonstrates the number of 
-samples with p-values below 0.05.
+samples with p-values below 0.05. The $\alpha = 0.05$ was selected as that means
+there is a very little probability ($5\%$) chance that the association we see is 
+completely randomly generated, i.e., false positive.
+
+### Summary of Results
 
 ```{r}
-length(which(qlf_output_hits$table$PValue < 0.05))
+alpha <- 0.05
+length(which(qlf_art_vs_ec_results$PValue < alpha))
 ```
 
 Furthermore, the following demonstrates the amount passing multiple tests 
 correction as follows.
 
 ```{r}
-length(which(qlf_output_hits$table$FDR < 0.05))
+length(which(qlf_art_vs_ec_results$FDR < alpha))
 ```
 
+The built in false discovery rate (FDR) multiple testing correction of 
+`glmQLFTest` was chosen as it offers less false negatives compared to Bonferonni
+Corrections.
+
+> 3. Show the amount of differentially expressed genes using an MA Plot or a 
+> Volcano plot. Highlight genes of interest.
+
+We will generate a volcano plot to visualize and further discuss our results.
+
+```{r}
+# Create a basic volcano plot
+
+signif_expr <- 0.25
+
+qlf_art_vs_ec_results$regulation <- apply(
+  qlf_art_vs_ec_results[c("FDR", "logFC")],
+  MARGIN = 1,
+  FUN = function(v) {
+    if (v["FDR"] < alpha) {
+      if (v["logFC"] >= signif_expr) {
+        return("Upregulated")
+      } else if (v["logFC"] <= -signif_expr) {
+        return("Downregulated")
+      }
+    }
+    return("Insignificant Change")
+})
+
+ggplot(
+       qlf_art_vs_ec_results,
+       aes(x = logFC, y = logFDR, color = regulation)) +
+  geom_point(alpha = 0.4) +
+  scale_color_manual(
+                     values = c("blue", "grey", "red")) +
+  theme_bw() +
+  xlab("Log2 Fold Change") +
+  ylab("-Log10 Adjusted P-Value") +
+  geom_vline(xintercept = c(-signif_expr, signif_expr), linetype = "dotted") +
+  geom_hline(yintercept = -log2(alpha), linetype = "dotted") +
+  ggtitle("Expression and Association Levels of Genes")
+```
+
+The top right indicate the upregulated genes and the top left indicate the 
+downregulated genes. We see that there are many genes that were not significant
+after FDR P-value adjustments.
+
+> 4. Visualize your top hits using a heatmap. Do you conditions cluster  
+> together? Explain why or why not.
+
+Our next step will be to plot a heatmap. This heatmap will be a re-scaled 
+heatmap of only the significantly associated genes after FDR.
+
+```{r}
+
+unique_patient <- unique(art_v_ec_meta$Patient)
+unique_patientcolors <- rainbow(n = length(unique_patient))
+names(unique_patientcolors) <- unique_patient
+
+unique_phenotypes <- unique(art_v_ec_meta$Phenotype)
+unique_phenotypescolors <- rainbow(n = length(unique_phenotypes))
+names(unique_phenotypescolors) <- unique_phenotypes
+
+ha_pat <- HeatmapAnnotation(df = data.frame(
+  patient = art_v_ec_meta$Patient,
+  phenotypes = art_v_ec_meta$Phenotype),
+  col = list(
+      patient = unique_patientcolors,
+      phenotypes = unique_phenotypescolors
+    ),
+  show_legend = TRUE
+)
+
+top_hits <- row.names(qlf_art_vs_ec_results)[qlf_art_vs_ec_results$FDR < alpha]
+gene_names <- row.names(n_ctrl_vs_art)
+art_v_ec_sig_norm <- t(scale(t(n_ctrl_vs_art[gene_names %in% top_hits,])))
+if (min(art_v_ec_sig_norm) == 0) {
+  heatmap_col <- colorRamp2(c(0, max(art_v_ec_sig_norm)), c("white", "red"))
+} else {
+  heatmap_col <- colorRamp2(c(min(art_v_ec_sig_norm), 0,
+  max(art_v_ec_sig_norm)),
+  c("blue", "white", "red"))
+}
+
+current_heatmap <- Heatmap(as.matrix(art_v_ec_sig_norm),
+  top_annotation = ha_pat,
+  cluster_rows = TRUE,
+  cluster_columns = TRUE,
+  show_row_dend = TRUE,
+  show_column_dend = TRUE,
+  col = heatmap_col,
+  show_column_names = FALSE,
+  show_row_names = FALSE,
+  show_heatmap_legend = TRUE,
+  column_title = ("Top hits EC vs ART")
+)
+
+current_heatmap
+```
+
+
+The above heatmap demonstrates how the different genes perform in association 
+with different HIV outcomes. Immediately, the figure depicts very obvious 
+clustering of genetic expression level changes in the column of patient $310817$ 
+and antiretroviral therapy patients patients (ARTs). Specifically, we can see 
+very significant clustering of upregulation occurring in genes placed in the 
+upper half of the square, while genes in the lower have are very significantly 
+downregulated. Generally speaking however, there is significant downregulation 
+in the same set of genes that was previously described as upregulated in viremic 
+controller patients (VCs). Elite controllers (ECs) seem to also have a tad more 
+downregulated genes in the upper half set of genes however, still closer to the 
+previously mentioned $310817$ ART than the general VC set of patients and genes. 
+This corroborates the results seen by the MDS plots where we have some 
+intersections between the different phenotypes.
+
+> Make sure all your figures have proper heading and labels. Every figure  
+> included in the report should have a detailed figure legend.
+
+# Threshold Overrepresentation Analysis
+
+This section will answer the following questions as described by the outline for
+assignment 2. Please see the end of this section for the answer to these 
+questions.
+
+> 1. Which method did you choose and why?
+
+```{r}
+
+
+#where to put all the generated files
+working_dir <- "./g_profiler/generated_data"
+if (!dir.exists(working_dir)) {
+  dir.create(working_dir, recursive = TRUE)
+}
+
+
+# where to find the data files needed to run the analysis
+data_dir <-  "./g_profiler/data"
+if (!dir.exists(data_dir)) {
+  dir.create(data_dir, recursive = TRUE)
+}
+
+
+# default min size of the genesets for example -  3
+min_gs_size <- 3
+
+#min intersection between your genelist and the geneset - for example 3
+min_intersection <- 3
+
+# organism parameter used for g:profiler.  
+# First letter of first word in species name followed by 
+# the second word for example - hsapiens
+organism <- "hsapiens"
+
+sources <- c("REAC", "WP", "GO:BP")
+max_term_size <- 250
+
+```
+
+
+I chose to use a list of upregulated and downregulated genes that was restricted 
+based off the previously used `r alpha` values as thresholds. The upregulation 
+and downregulation were also previously determined by the the `r signif_expr` 
+variable. The gene lists produced as a product of such thresholds and previous 
+gene expression analysis was used as a query set for 
+[g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) programmatically and the 
+results were returned and further filtered by setting an upper bound on term 
+size by `r max_term_size`. P-values are adjusted for multiple testing via FDR.
+Parameters can be seen below. 
+
+```{r}
+qlf_art_vs_ec_results$hgnc_symbol <- lapply(row.names(qlf_art_vs_ec_results), FUN = function(x) {
+  return(unlist(str_split(x, "_"))[[2]])
+})
+
+regulated_genes_dir <- "regulated_genes"
+
+if (!dir.exists("regulated_genes")) {
+  dir.create(regulated_genes_dir)
+}
+
+upregulated_genes <- qlf_art_vs_ec_results$hgnc_symbol[
+  which(qlf_art_vs_ec_results$PValue < 0.05
+  & qlf_art_vs_ec_results$logFC > 0)]
+downregulated_genes <- qlf_art_vs_ec_results$hgnc_symbol[
+  which(qlf_art_vs_ec_results$PValue < 0.05
+  & qlf_art_vs_ec_results$logFC < 0)]
+write.table(x=upregulated_genes,
+  file=file.path(getwd(), file.path(
+    regulated_genes_dir,
+    "upregulated_genes.txt")),
+  sep = "\n",row.names = FALSE,
+  col.names = FALSE,quote = FALSE)
+write.table(x=downregulated_genes,
+  file=file.path(getwd(), file.path(
+    regulated_genes_dir,
+    "downregulated_genes.txt")),
+sep = "\n",row.names = FALSE,
+col.names = FALSE,quote = FALSE)
+```
+
+The next steps involve running g:Profiler programmatically via R.
+
+```{r}
+
+query_gprofiler <- function(
+    genes,
+    cache_name = "") {
+
+  cache_path <- file.path(working_dir, "results", cache_name)
+  if (!dir.exists(dirname(cache_path)) && cache_name != "") {
+    dir.create(dirname(cache_path))
+  }
+  if (file.exists(cache_path) && cache_name != "") {
+    enrichment_results <- fread(cache_path)
+  } else {
+gp_results <- gost(query = unlist(genes),
+                       significant = FALSE,
+                       ordered_query = FALSE,
+                       exclude_iea = TRUE,
+                       evcodes = TRUE,
+                       correction_method = "fdr",
+                       organism = organism,
+                       domain_scope = "annotated",
+                       source = sources)
+    enrichment_results <- gp_results$result
+    if (cache_name != "") {
+      fwrite(enrichment_results, file = cache_path)
+    }
+  }
+
+  return(enrichment_results)
+}
+
+upregulated_enrichment <- query_gprofiler(
+  upregulated_genes, 
+  "upregulation_results.csv")
+
+downregulated_enrichment <- query_gprofiler(
+  downregulated_genes, 
+  "downregulation_results.csv")
+
+all_enrichment <- query_gprofiler(
+  c(upregulated_genes, downregulated_genes), 
+  "all_results.csv")
+
+```
+
+Briefly, configure to only show specific, relevent columns and maximum number
+of results.
+
+```{r}
+
+important_columns <- c(
+  "term_name",
+  "p_value",
+  "term_size",
+  "intersection_size",
+  "source"
+)
+
+number_of_results <- 15
+
+```
+
+> 2. What annotation data did you use and why? What version of the annotation 
+> are you using?
+
+For this assignment, I used `r sources` as described outlined in the 
+tutorial. I used the latest version of the annotations which can be see in the
+following code block.
+
+```{r}
+str(get_version_info(organism = organism))
+```
+
+> 3. How many genesets were returned with what thresholds?
+
+All term sizes were capped at `r max_term_size` and adjusted p-values were 
+capped at `r alpha`.
+
+Upregulated significant genes enrichment analysis as follows.
+
+```{r}
+thresholded_up <- upregulated_enrichment[
+  upregulated_enrichment$term_size <= max_term_size & 
+  upregulated_enrichment$p_value < alpha,]
+ordered_thresholded_up <- thresholded_up[
+  order(thresholded_up$intersection_size),]
+kable(
+  thresholded_up[1:number_of_results, ..important_columns],
+  type = "html",
+  caption = paste(
+    "Top",
+    number_of_results,
+    "Pathways Enriched with Up-regulated Genes"
+  )
+)
+```
+
+
+Downregulated significant genes enrichment analysis as follows.
+
+```{r}
+thresholded_down <- downregulated_enrichment[
+  downregulated_enrichment$term_size <= max_term_size & 
+  downregulated_enrichment$p_value < alpha,]
+ordered_thresholded_down <- thresholded_down[
+  order(thresholded_down$intersection_size),]
+kable(
+  thresholded_down[1:number_of_results, ..important_columns],
+  type = "html",
+  caption = paste(
+    "Top",
+    number_of_results,
+    "Pathways Enriched with Down-regulated Genes"
+  )
+)
+```
+
+All significant genes enrichment analysis as follows.
+
+```{r}
+thresholded_all <- all_enrichment[
+  all_enrichment$term_size <= max_term_size & 
+  all_enrichment$p_value < alpha,]
+ordered_thresholded_all <- thresholded_all[
+  order(thresholded_all$intersection_size),]
+
+kable(
+  thresholded_all[1:number_of_results, ..important_columns],
+  type = "html",
+  caption = paste(
+    "Top",
+    number_of_results,
+    "Pathways Enriched with All Regulated Genes"
+  )
+)
+```
+
+
+> 4. Run the analysis using the up-regulated set of genes, and the 
+> down-regulated set of genes separately. How do these results compare to using 
+> the whole list (i.e all differentially expressed genes together vs. the 
+> up-regulated and down regulated differentially expressed genes separately)?
+
+In the union set of both up and down regulated genes, we see that there are many
+more results. This is due to there being more potential genes to partake in 
+various pathways than any individual. Furthermore, for the same reason, there
+are many more results where the range of possible intersection sizes is 
+increased and the relative number of larger term sizes may also be increased.
+
+Diving into the specifics, we can see there is an upregulation of various immune
+cell differentiation. This corroborates the general theory that the virus has 
+some capacity to surpress the operations of the immune system.
+
+> Additional Notes: Present your results with the use of tables and screenshots. 
+> All figures should have appropriate figure legends.
+>
+> If using figures create a figures directory in your repo and make sure all 
+> references to the figures are relative in your Rmarkdown notebook.
+
+# References
+
+::: {#refs}
+:::

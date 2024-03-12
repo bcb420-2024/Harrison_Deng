@@ -1,6 +1,3 @@
-
-<!-- rnb-text-begin -->
-
 ---
 title: "BCB420 Assignment #1: Data set selection and initial Processing"
 output:
@@ -10,14 +7,6 @@ bibliography: references.bib
 ---
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImxpYnJhcnkoXCJHRU9xdWVyeVwiKSIsImxpYnJhcnkoXCJrbml0clwiKSIsImxpYnJhcnkoXCJlZGdlUlwiKSIsImxpYnJhcnkoXCJiaW9tYVJ0XCIpIiwibGlicmFyeShcInN0cmluZ3JcIikiLCJsaWJyYXJ5KFwibGltbWFcIikiXX0= -->
-
 ```r
 library("GEOquery")
 library("knitr")
@@ -26,16 +15,6 @@ library("biomaRt")
 library("stringr")
 library("limma")
 ```
-
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
 
 # BCB420 Assignment #1: Data Set Selection and Initial Processing
 
@@ -56,93 +35,33 @@ We will begin by downloading the data with use of the GEOquery library.
 ### Fetching GEO Data
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImRhdGFfc2V0X2dlb2lkIDwtIFwiR1NFMTk2NTQ5XCIiLCJnc2UgPC0gZ2V0R0VPKGRhdGFfc2V0X2dlb2lkICxHU0VNYXRyaXg9RkFMU0UpICMgRmV0Y2hlcyBHRU8gU09GVCBhbmQgcGFyc2VzLiIsImdzZUBoZWFkZXIkc3VtbWFyeSJdfQ== -->
-
 ```r
 data_set_geoid <- "GSE196549"
 gse <- getGEO(data_set_geoid ,GSEMatrix=FALSE) # Fetches GEO SOFT and parses.
 gse@header$summary
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRm9sbGljdWxhciBDRDgrIFQgY2VsbHMgKGZDRDgpIG1lZGlhdGUgc3VydmVpbGxhbmNlIGluIGx5bXBoIG5vZGUgKExOKSBnZXJtaW5hbCBjZW50ZXJzIGFnYWluc3QgbHltcGhvdHJvcGljIGluZmVjdGlvbnMgYW5kIGNhbmNlcnMsIGJ1dCBwcmVjaXNlIG1lY2hhbmlzbXMgYnkgd2hpY2ggdGhlc2UgY2VsbHMgbWVkaWF0ZSBpbW11bmUgY29udHJvbCByZW1haW4gaW5jb21wbGV0ZWx5IHJlc29sdmVkLiBUbyBhZGRyZXNzIHRoaXMsIHdlIGludmVzdGlnYXRlZCBmdW5jdGlvbmFsaXR5LCBjbG9ub3R5cGljIGNvbXBhcnRtZW50YWxpemF0aW9uLCBzcGF0aWFsIGxvY2FsaXphdGlvbiwgcGhlbm90eXBpYyBjaGFyYWN0ZXJpc3RpY3MsIGFuZCB0cmFuc2NyaXB0aW9uYWwgcHJvZmlsZXMgb2YgTE4tcmVzaWRlbnQgdmlydXMtc3BlY2lmaWMgQ0Q4KyBUIGNlbGxzIGluIHBlcnNvbnMgd2hvIGNvbnRyb2wgSElWIHdpdGhvdXQgbWVkaWNhdGlvbnMuIEFudGlnZW4taW5kdWNlZCBwcm9saWZlcmF0aXZlIGFuZCBjeXRvbHl0aWMgcG90ZW50aWFsIGNvbnNpc3RlbnRseSBkaXN0aW5ndWlzaGVkIHNwb250YW5lb3VzIGNvbnRyb2xsZXJzIGZyb20gbm9uY29udHJvbGxlcnMuIFQgY2VsbCByZWNlcHRvciBhbmFseXNpcyByZXZlYWxlZCBjb21wbGV0ZSBjbG9ub3R5cGljIG92ZXJsYXAgYmV0d2VlbiBwZXJpcGhlcmFsIGFuZCBMTi1yZXNpZGVudCBISVYtc3BlY2lmaWMgQ0Q4KyBUIGNlbGxzLiBUcmFuc2NyaXB0aW9uYWwgYW5hbHlzaXMgb2YgTE4gQ0Q4KyBUIGNlbGxzIHJldmVhbGVkIGdlbmUgc2lnbmF0dXJlcyBvZiBpbmZsYW1tYXRvcnkgY2hlbW90YXhpcyBhbmQgYW50aWdlbi1pbmR1Y2VkIGVmZmVjdG9yIGZ1bmN0aW9uLiBJbiBISVYgY29udHJvbGxlcnMsIHRoZSBjeXRvdG94aWMgZWZmZWN0b3JzIHBlcmZvcmluIGFuZCBncmFuenltZSBCIHdlcmUgZWxldmF0ZWQgYW1vbmcgdmlydXMtc3BlY2lmaWMgQ1hDUjUrIGZDRDhzIHByb3hpbWF0ZSB0byBmb2NpIG9mIEhJViBSTkEgd2l0aGluIGdlcm1pbmFsIGNlbnRlcnMuIFRoZXNlIHJlc3VsdHMgcHJvdmlkZSBldmlkZW5jZSBjb25zaXN0ZW50IHdpdGggY3l0b2x5dGljIGNvbnRyb2wgb2YgbHltcGhvdHJvcGljIGluZmVjdGlvbiBzdXBwb3J0ZWQgYnkgaW5mbGFtbWF0b3J5IHJlY3J1aXRtZW50LCBhbnRpZ2VuLXNwZWNpZmljIHByb2xpZmVyYXRpb24sIGFuZCBjeXRvdG94aWNpdHkgb2YgZkNEOHMuXCJcbiJ9 -->
-
 ```
-[1] "Follicular CD8+ T cells (fCD8) mediate surveillance in lymph node (LN) germinal centers against lymphotropic infections and cancers, but precise mechanisms by which these cells mediate immune control remain incompletely resolved. To address this, we investigated functionality, clonotypic compartmentalization, spatial localization, phenotypic characteristics, and transcriptional profiles of LN-resident virus-specific CD8+ T cells in persons who control HIV without medications. Antigen-induced proliferative and cytolytic potential consistently distinguished spontaneous controllers from noncontrollers. T cell receptor analysis revealed complete clonotypic overlap between peripheral and LN-resident HIV-specific CD8+ T cells. Transcriptional analysis of LN CD8+ T cells revealed gene signatures of inflammatory chemotaxis and antigen-induced effector function. In HIV controllers, the cytotoxic effectors perforin and granzyme B were elevated among virus-specific CXCR5+ fCD8s proximate to foci of HIV RNA within germinal centers. These results provide evidence consistent with cytolytic control of lymphotropic infection supported by inflammatory recruitment, antigen-specific proliferation, and cytotoxicity of fCD8s."
+## [1] "Follicular CD8+ T cells (fCD8) mediate surveillance in lymph node (LN) germinal centers against lymphotropic infections and cancers, but precise mechanisms by which these cells mediate immune control remain incompletely resolved. To address this, we investigated functionality, clonotypic compartmentalization, spatial localization, phenotypic characteristics, and transcriptional profiles of LN-resident virus-specific CD8+ T cells in persons who control HIV without medications. Antigen-induced proliferative and cytolytic potential consistently distinguished spontaneous controllers from noncontrollers. T cell receptor analysis revealed complete clonotypic overlap between peripheral and LN-resident HIV-specific CD8+ T cells. Transcriptional analysis of LN CD8+ T cells revealed gene signatures of inflammatory chemotaxis and antigen-induced effector function. In HIV controllers, the cytotoxic effectors perforin and granzyme B were elevated among virus-specific CXCR5+ fCD8s proximate to foci of HIV RNA within germinal centers. These results provide evidence consistent with cytolytic control of lymphotropic infection supported by inflammatory recruitment, antigen-specific proliferation, and cytotoxicity of fCD8s."
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiRm9sbGljdWxhciBDRDgrIFQgY2VsbHMgKGZDRDgpIG1lZGlhdGUgc3VydmVpbGxhbmNlIGluIGx5bXBoIG5vZGUgKExOKSBnZXJtaW5hbCBjZW50ZXJzIGFnYWluc3QgbHltcGhvdHJvcGljIGluZmVjdGlvbnMgYW5kIGNhbmNlcnMsIGJ1dCBwcmVjaXNlIG1lY2hhbmlzbXMgYnkgd2hpY2ggdGhlc2UgY2VsbHMgbWVkaWF0ZSBpbW11bmUgY29udHJvbCByZW1haW4gaW5jb21wbGV0ZWx5IHJlc29sdmVkLiBUbyBhZGRyZXNzIHRoaXMsIHdlIGludmVzdGlnYXRlZCBmdW5jdGlvbmFsaXR5LCBjbG9ub3R5cGljIGNvbXBhcnRtZW50YWxpemF0aW9uLCBzcGF0aWFsIGxvY2FsaXphdGlvbiwgcGhlbm90eXBpYyBjaGFyYWN0ZXJpc3RpY3MsIGFuZCB0cmFuc2NyaXB0aW9uYWwgcHJvZmlsZXMgb2YgTE4tcmVzaWRlbnQgdmlydXMtc3BlY2lmaWMgQ0Q4KyBUIGNlbGxzIGluIHBlcnNvbnMgd2hvIGNvbnRyb2wgSElWIHdpdGhvdXQgbWVkaWNhdGlvbnMuIEFudGlnZW4taW5kdWNlZCBwcm9saWZlcmF0aXZlIGFuZCBjeXRvbHl0aWMgcG90ZW50aWFsIGNvbnNpc3RlbnRseSBkaXN0aW5ndWlzaGVkIHNwb250YW5lb3VzIGNvbnRyb2xsZXJzIGZyb20gbm9uY29udHJvbGxlcnMuIFQgY2VsbCByZWNlcHRvciBhbmFseXNpcyByZXZlYWxlZCBjb21wbGV0ZSBjbG9ub3R5cGljIG92ZXJsYXAgYmV0d2VlbiBwZXJpcGhlcmFsIGFuZCBMTi1yZXNpZGVudCBISVYtc3BlY2lmaWMgQ0Q4KyBUIGNlbGxzLiBUcmFuc2NyaXB0aW9uYWwgYW5hbHlzaXMgb2YgTE4gQ0Q4KyBUIGNlbGxzIHJldmVhbGVkIGdlbmUgc2lnbmF0dXJlcyBvZiBpbmZsYW1tYXRvcnkgY2hlbW90YXhpcyBhbmQgYW50aWdlbi1pbmR1Y2VkIGVmZmVjdG9yIGZ1bmN0aW9uLiBJbiBISVYgY29udHJvbGxlcnMsIHRoZSBjeXRvdG94aWMgZWZmZWN0b3JzIHBlcmZvcmluIGFuZCBncmFuenltZSBCIHdlcmUgZWxldmF0ZWQgYW1vbmcgdmlydXMtc3BlY2lmaWMgQ1hDUjUrIGZDRDhzIHByb3hpbWF0ZSB0byBmb2NpIG9mIEhJViBSTkEgd2l0aGluIGdlcm1pbmFsIGNlbnRlcnMuIFRoZXNlIHJlc3VsdHMgcHJvdmlkZSBldmlkZW5jZSBjb25zaXN0ZW50IHdpdGggY3l0b2x5dGljIGNvbnRyb2wgb2YgbHltcGhvdHJvcGljIGluZmVjdGlvbiBzdXBwb3J0ZWQgYnkgaW5mbGFtbWF0b3J5IHJlY3J1aXRtZW50LCBhbnRpZ2VuLXNwZWNpZmljIHByb2xpZmVyYXRpb24sIGFuZCBjeXRvdG94aWNpdHkgb2YgZkNEOHMuXG4ifQ== -->
-
-```
-Follicular CD8+ T cells (fCD8) mediate surveillance in lymph node (LN) germinal centers against lymphotropic infections and cancers, but precise mechanisms by which these cells mediate immune control remain incompletely resolved. To address this, we investigated functionality, clonotypic compartmentalization, spatial localization, phenotypic characteristics, and transcriptional profiles of LN-resident virus-specific CD8+ T cells in persons who control HIV without medications. Antigen-induced proliferative and cytolytic potential consistently distinguished spontaneous controllers from noncontrollers. T cell receptor analysis revealed complete clonotypic overlap between peripheral and LN-resident HIV-specific CD8+ T cells. Transcriptional analysis of LN CD8+ T cells revealed gene signatures of inflammatory chemotaxis and antigen-induced effector function. In HIV controllers, the cytotoxic effectors perforin and granzyme B were elevated among virus-specific CXCR5+ fCD8s proximate to foci of HIV RNA within germinal centers. These results provide evidence consistent with cytolytic control of lymphotropic infection supported by inflammatory recruitment, antigen-specific proliferation, and cytotoxicity of fCD8s.
-```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
 
 Seeing as the data is downloaded correctly, we can check the information regarding the platform used to generate the data.
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImN1cnJlbnRfZ3BsIDwtIG5hbWVzKEdQTExpc3QoZ3NlKSkiLCJjdXJyZW50X2dwbF9pbmZvIDwtIE1ldGEoZ2V0R0VPKGN1cnJlbnRfZ3BsKSkiXX0= -->
 
 ```r
 current_gpl <- names(GPLList(gse))
 current_gpl_info <- Meta(getGEO(current_gpl))
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 -   Platform title: NextSeq 550 (Homo sapiens)
 -   Submission date: Apr 05 2016
 -   Last update: Dec 05 2018
 -   Organisms: Homo sapiens
--   Number of GEO datasets using this platform: 1232
--   Number of GEO samples that use this technology: 33612
+-   Number of GEO datasets using this platform: 1234
+-   Number of GEO samples that use this technology: 33626
 
 Next, we'll take a quick look at the processing methodology information embedded in the individual sample records:
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjoiZm9yIChpbmZvIGluIGdzZUBnc21zW1sxXV1AaGVhZGVyJGRhdGFfcHJvY2Vzc2luZykge1xuICBwcmludChpbmZvKVxufSJ9 -->
 
 ```r
 for (info in gse@gsms[[1]]@header$data_processing) {
@@ -150,43 +69,19 @@ for (info in gse@gsms[[1]]@header$data_processing) {
 }
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiSWxsdW1pbmEgc2VxdWVuY2luZyBydW4gd2FzIGRlZW11bHRpcGxleGVkIHVzaW5nIGJjbDJmYXN0cSB2ZWVyc2lvbiAyLjE5LjEuNDAzLlwiXG5bMV0gXCJSZWFkcyB3ZXJlIHRoZW4gbWFwcGVlZCB0byB0aGUgaGczOCB0cmFuc2NyaXB0b21lIHVzaW5nIHRoZSBSU0VNIHBpcGVsaW5lIHZlcnNpb24gMS4zLjAgd2l0aCBib3d0aWUgYWxpZ25lciB2ZXJzaW9uIDEuMi4yLiBSZWFkIGNvdW50cyB3ZXJlIGNhbGN1bGF0ZWQgYXMgZXhwZWN0ZWQgY291bnRzLCBhbmQgcm91bmRlZCB0byBpbnRlZ2VyIHZhbHVlcyBmb3IgYW5hbHlzaXMgd2l0aCBERVNlcTIsIG9yIHVzZWQgd2l0aG91dCByb3VuZGluZyBpbiBlZGdlUi5cIlxuWzFdIFwiRGlmZmVyZW50aWFsIGV4cHJlc3Npb24gYW5hbHlzaXMgd2FzIHBlcmZvcm1lZCB1c2luZyBERVNlcTIgdmVyc2lvbiAxLjI2LjAgdXNpbmcgYSBtb2RlbCBpbmNsdWRpbmcgdGhlIGZvbGxvd2luZyB0ZXJtczogXFxcIn4gcGF0aWVudF9JRCArIHRpc3N1ZSArIEdlbmVzRXhwQ291bnRHUkUxICsgYWxpZ25fcmF0ZSArIHBjdEdDLlIxXFxcIlwiXG5bMV0gXCJQcmlvciB0byBkaWZmZXJlbnRpYWwgZXhwcmVzc2lvbiBhbmFseXNpcywgZ2VuZXMgd2VyZSBmaWx0ZXJlZCB0byBoYXZlIGF0IGxlYXN0IDUgZXhwZWN0ZWQgY291bnRzIGluIGF0IGxlYXN0IDEwJSBvZiBzYW1wbGVzLlwiXG5bMV0gXCJHZW5vbWVfYnVpbGQ6IEdSQ2gzOC5wNVwiXG5bMV0gXCJTdXBwbGVtZW50YXJ5X2ZpbGVzX2Zvcm1hdF9hbmRfY29udGVudDogVGhlIGV4cGVjdGVkIGNvdW50cyBtYXRyaXggKFIxMDE1UjEyMDAuRklMVC5FQy50c3YpIGluY2x1ZGVzIGNvdW50cyBmb3Igc2FtcGxlcyBhbmQgZ2VuZXMgbGlzdGVkIGJ5IHRoZWlyIHJlc3BlY3RpdmUgRU5TRU1CTCBnZW5lIElEcyBhbmQgZ2VuZSBzeW1ib2xzLCBkZWxpbWl0ZWQgYnkgYW4gdW5kZXJzY29yZS4gUjEwMTVSMTIwMC5GSUxULkVDLkxUTU0udHN2IGNvbnRhaW5zIHRoZSBjb3JyZXNwb25kaW5nIFRNTS1ub3JtYWxpemVkIGxvZyB0cmFuc2Zvcm1lZCBjb3VudHMuIFRoZSBHRU8ubWV0YWRhdGEgZmlsZSBpcyBjb21wbGV0ZSBzYW1wbGUgbWV0YWRhdGEgaW5jbHVkaW5nIFFDIGV2YWx1YXRpb25zIGluIHRhYi1zZXBhcmF0ZWQgZm9ybWF0LiBSMTAxNVIxMjAwLkxOdlBCLnJzbHQudHN2IGlzIHRoZSBERVNlcTIgcmVzdWx0IHNldCBhcyB0YWItc2VwYXJhdGVkIHZhbHVlcy5cIlxuIn0= -->
-
 ```
-[1] "Illumina sequencing run was deemultiplexed using bcl2fastq veersion 2.19.1.403."
-[1] "Reads were then mappeed to the hg38 transcriptome using the RSEM pipeline version 1.3.0 with bowtie aligner version 1.2.2. Read counts were calculated as expected counts, and rounded to integer values for analysis with DESeq2, or used without rounding in edgeR."
-[1] "Differential expression analysis was performed using DESeq2 version 1.26.0 using a model including the following terms: \"~ patient_ID + tissue + GenesExpCountGRE1 + align_rate + pctGC.R1\""
-[1] "Prior to differential expression analysis, genes were filtered to have at least 5 expected counts in at least 10% of samples."
-[1] "Genome_build: GRCh38.p5"
-[1] "Supplementary_files_format_and_content: The expected counts matrix (R1015R1200.FILT.EC.tsv) includes counts for samples and genes listed by their respective ENSEMBL gene IDs and gene symbols, delimited by an underscore. R1015R1200.FILT.EC.LTMM.tsv contains the corresponding TMM-normalized log transformed counts. The GEO.metadata file is complete sample metadata including QC evaluations in tab-separated format. R1015R1200.LNvPB.rslt.tsv is the DESeq2 result set as tab-separated values."
+## [1] "Illumina sequencing run was deemultiplexed using bcl2fastq veersion 2.19.1.403."
+## [1] "Reads were then mappeed to the hg38 transcriptome using the RSEM pipeline version 1.3.0 with bowtie aligner version 1.2.2. Read counts were calculated as expected counts, and rounded to integer values for analysis with DESeq2, or used without rounding in edgeR."
+## [1] "Differential expression analysis was performed using DESeq2 version 1.26.0 using a model including the following terms: \"~ patient_ID + tissue + GenesExpCountGRE1 + align_rate + pctGC.R1\""
+## [1] "Prior to differential expression analysis, genes were filtered to have at least 5 expected counts in at least 10% of samples."
+## [1] "Genome_build: GRCh38.p5"
+## [1] "Supplementary_files_format_and_content: The expected counts matrix (R1015R1200.FILT.EC.tsv) includes counts for samples and genes listed by their respective ENSEMBL gene IDs and gene symbols, delimited by an underscore. R1015R1200.FILT.EC.LTMM.tsv contains the corresponding TMM-normalized log transformed counts. The GEO.metadata file is complete sample metadata including QC evaluations in tab-separated format. R1015R1200.LNvPB.rslt.tsv is the DESeq2 result set as tab-separated values."
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
 
 ### Fetching Study Supplementary Files
 
 Then, we'll download all discovered supplementary files again using GEOQuery [@davisGEOqueryBridgeGene2007].
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgR2V0IGFsbCBrbm93biBzdXBwbGVtZW50YXJ5IGZpbGUgaW5mb3JtYXRpb24uIiwic2ZpbGVuYW1lcyA9IGdldEdFT1N1cHBGaWxlcyhkYXRhX3NldF9nZW9pZCwgZmV0Y2hfZmlsZXMgPSBGQUxTRSkiLCJzZmlsZW5hbWVzJGZuYW1lIl19 -->
 
 ```r
 # Get all known supplementary file information.
@@ -194,40 +89,12 @@ sfilenames = getGEOSuppFiles(data_set_geoid, fetch_files = FALSE)
 sfilenames$fname
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiR1NFMTk2NTQ5X0dFTy5tZXRhZGF0YS50c3YuZ3pcIiAgICAgICAgICAgXG5bMl0gXCJHU0UxOTY1NDlfUjEwMTVSMTIwMC5GSUxULkVDLkxUTU0udHN2Lmd6XCJcblszXSBcIkdTRTE5NjU0OV9SMTAxNVIxMjAwLkZJTFQuRUMudHN2Lmd6XCIgICAgIFxuWzRdIFwiR1NFMTk2NTQ5X1IxMDE1UjEyMDAuTE52UEIucnNsdC50c3YuZ3pcIiAgXG4ifQ== -->
-
 ```
-[1] "GSE196549_GEO.metadata.tsv.gz"           
-[2] "GSE196549_R1015R1200.FILT.EC.LTMM.tsv.gz"
-[3] "GSE196549_R1015R1200.FILT.EC.tsv.gz"     
-[4] "GSE196549_R1015R1200.LNvPB.rslt.tsv.gz"  
+## [1] "GSE196549_GEO.metadata.tsv.gz"           
+## [2] "GSE196549_R1015R1200.FILT.EC.LTMM.tsv.gz"
+## [3] "GSE196549_R1015R1200.FILT.EC.tsv.gz"     
+## [4] "GSE196549_R1015R1200.LNvPB.rslt.tsv.gz"
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjpbIkdTRTE5NjU0OV9HRU8ubWV0YWRhdGEudHN2Lmd6XG4iLCJHU0UxOTY1NDlfUjEwMTVSMTIwMC5GSUxULkVDLkxUTU0udHN2Lmd6XG4iLCJHU0UxOTY1NDlfUjEwMTVSMTIwMC5GSUxULkVDLnRzdi5nelxuIiwiR1NFMTk2NTQ5X1IxMDE1UjEyMDAuTE52UEIucnNsdC50c3YuZ3pcbiJdfQ== -->
-
-```
-GSE196549_GEO.metadata.tsv.gz
-
-GSE196549_R1015R1200.FILT.EC.LTMM.tsv.gz
-
-GSE196549_R1015R1200.FILT.EC.tsv.gz
-
-GSE196549_R1015R1200.LNvPB.rslt.tsv.gz
-```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgRG93bmxvYWQgbG9jYXRpb24iLCJkb3dubG9hZF9kaXIgPC0gZmlsZS5wYXRoKGZpbGUucGF0aChnZXR3ZCgpLCBcImV4cHJlc3Npb25fZGF0YVwiKSkiLCJpZiAoIWRpci5leGlzdHMoZG93bmxvYWRfZGlyKSkge1xuICBkaXIuY3JlYXRlKGRvd25sb2FkX2RpcikgIyBDcmVhdGUgZm9sZGVyIGlmIGl0IGRvZXNuJ3QgZXhpc3QuXG59IiwiIiwiIyBGaWd1cmUgb3V0IHdoaWNoIGZpbGVzIGFyZSBtaXNzaW5nIiwibWlzc2luZ19maWxlcyA8LSBzZmlsZW5hbWVzJGZuYW1lWyF1bmxpc3QoXG4gIGxhcHBseShcbiAgICBzZmlsZW5hbWVzJGZuYW1lLCBGVU49ZnVuY3Rpb24oeCl7XG4gICAgICBmaWxlLmV4aXN0cyhmaWxlLnBhdGgoZG93bmxvYWRfZGlyLGRhdGFfc2V0X2dlb2lkLHgpKVxuICAgIH1cbiAgKVxuKV0iLCIiLCJpZihsZW5ndGgobWlzc2luZ19maWxlcykgPjApe1xuICBmb3IoaSBpbiAxOmxlbmd0aChtaXNzaW5nX2ZpbGVzKSkge1xuICAgICNnZXQgdGhlIHN1cHBsZW1lbnRhcnkgZmlsZXNcbiAgICBzZmlsZXMgPSBnZXRHRU9TdXBwRmlsZXMoZGF0YV9zZXRfZ2VvaWQsXG4gICAgICBmaWx0ZXJfcmVnZXggPSBtaXNzaW5nX2ZpbGVzW2ldLFxuICAgICAgYmFzZURpciA9IGRvd25sb2FkX2RpcixcbiAgICAgIGZldGNoX2ZpbGVzID0gVFJVRSlcbiAgfVxufSJdfQ== -->
 
 ```r
 # Download location
@@ -256,63 +123,30 @@ if(length(missing_files) >0){
 }
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 ### Fetching Sample Metadata
 
 The metadata here contains all the information regarding each samples. Data is displayed using knitr [@xieKnitrComprehensiveTool2014].
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhIDwtIHJlYWQudGFibGUoXG4gIGZpbGUucGF0aChkb3dubG9hZF9kaXIsZGF0YV9zZXRfZ2VvaWQsIFwiR1NFMTk2NTQ5X0dFTy5tZXRhZGF0YS50c3YuZ3pcIiksXG4gIGhlYWRlcj1UUlVFLFxuICBjaGVjay5uYW1lcz1UUlVFXG4gICkiLCJjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YSA8LSBjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YVssLWMoMSldICMgRGVsZXRlIGR1cGxpY2F0ZSBjb2x1bW4iLCJyb3cubmFtZXMoY29udHJvbGxlcl92c19hcnRfbWV0YWRhdGEpIDwtIGNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhWywxXSIsImRpbShjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YSkiXX0= -->
-
 ```r
-controller_vs_art_metadata <- read.table(
+art_v_ec_meta <- read.table(
   file.path(download_dir,data_set_geoid, "GSE196549_GEO.metadata.tsv.gz"),
   header=TRUE,
   check.names=TRUE
   )
-controller_vs_art_metadata <- controller_vs_art_metadata[,-c(1)] # Delete duplicate column
-row.names(controller_vs_art_metadata) <- controller_vs_art_metadata[,1]
-dim(controller_vs_art_metadata)
+art_v_ec_meta <- art_v_ec_meta[,-c(1)] # Delete duplicate column
+row.names(art_v_ec_meta) <- art_v_ec_meta[,1]
+dim(art_v_ec_meta)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ4IDMyXG4ifQ== -->
-
 ```
-[1] 48 32
+## [1] 48 32
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjoia2FibGUoY29udHJvbGxlcl92c19hcnRfbWV0YWRhdGFbMTo4LF0sIGZvcm1hdCA9IFwiaHRtbFwiKSJ9 -->
 
 ```r
-kable(controller_vs_art_metadata[1:8,], format = "html")
+kable(art_v_ec_meta[1:8,], format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -635,24 +469,10 @@ kable(controller_vs_art_metadata[1:8,], format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 Note that there are 3 replicates for each patient. Replicates were consistent across all patients and contributed to the reliability of the data and therefore not manually removed.
 
 ### Fetching Sample Data
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImNvbnRyb2xsZXJfdnNfYXJ0X2V4cHIgPC0gcmVhZC50YWJsZShcbiAgZmlsZS5wYXRoKGRvd25sb2FkX2RpcixkYXRhX3NldF9nZW9pZCwgXCJHU0UxOTY1NDlfUjEwMTVSMTIwMC5GSUxULkVDLnRzdi5nelwiKSxcbiAgaGVhZGVyPVRSVUUsXG4gIGNoZWNrLm5hbWVzPVRSVUVcbikiLCJyb3cubmFtZXMoY29udHJvbGxlcl92c19hcnRfZXhwcikgPC0gY29udHJvbGxlcl92c19hcnRfZXhwciRYIiwiY29udHJvbGxlcl92c19hcnRfZXhwciA8LSBjb250cm9sbGVyX3ZzX2FydF9leHByWy1jKDEpXSIsImRpbShjb250cm9sbGVyX3ZzX2FydF9leHByKSJdfQ== -->
 
 ```r
 controller_vs_art_expr <- read.table(
@@ -665,29 +485,14 @@ controller_vs_art_expr <- controller_vs_art_expr[-c(1)]
 dim(controller_vs_art_expr)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE4MTYwICAgIDQ4XG4ifQ== -->
-
 ```
-[1] 18160    48
+## [1] 18160    48
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjoia2FibGUoY29udHJvbGxlcl92c19hcnRfZXhwclsxOjgsMTo0XSwgZm9ybWF0ID0gXCJodG1sXCIpIn0= -->
 
 ```r
 kable(controller_vs_art_expr[1:8,1:4], format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -758,24 +563,10 @@ kable(controller_vs_art_expr[1:8,1:4], format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 Dataset chosen based on the information provided when looking at the materials and methods information above.
 
 ### Checking for Identical Expression Values
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImR1cGxpY2F0ZWRfZXhwcmVzc2lvbl9zZWxlY3QgPC0gZHVwbGljYXRlZChjb250cm9sbGVyX3ZzX2FydF9leHByKSIsImR1cGxpY2F0ZWRfZXhwcmVzc2lvbnMgPC0gY29udHJvbGxlcl92c19hcnRfZXhwcltkdXBsaWNhdGVkX2V4cHJlc3Npb25fc2VsZWN0LF0iLCJrYWJsZShkdXBsaWNhdGVkX2V4cHJlc3Npb25zLCBmb3JtYXQgPSBcImh0bWxcIikiXX0= -->
 
 ```r
 duplicated_expression_select <- duplicated(controller_vs_art_expr)
@@ -783,9 +574,6 @@ duplicated_expressions <- controller_vs_art_expr[duplicated_expression_select,]
 kable(duplicated_expressions, format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -1558,51 +1346,22 @@ kable(duplicated_expressions, format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 We see several duplicated expressions here. We will remove them.
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImNvbnRyb2xsZXJfdnNfYXJ0X2V4cHIgPC0gY29udHJvbGxlcl92c19hcnRfZXhwclshZHVwbGljYXRlZF9leHByZXNzaW9uX3NlbGVjdCxdIiwiZGltKGNvbnRyb2xsZXJfdnNfYXJ0X2V4cHIpIl19 -->
 
 ```r
 controller_vs_art_expr <- controller_vs_art_expr[!duplicated_expression_select,]
 dim(controller_vs_art_expr)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE4MTQ2ICAgIDQ4XG4ifQ== -->
-
 ```
-[1] 18146    48
+## [1] 18146    48
 ```
-
-
-
-<!-- rnb-output-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjoia2FibGUoY29udHJvbGxlcl92c19hcnRfZXhwclsxOjgsMTo0XSwgZm9ybWF0ID0gXCJodG1sXCIpIn0= -->
 
 ```r
 kable(controller_vs_art_expr[1:8,1:4], format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -1673,74 +1432,37 @@ kable(controller_vs_art_expr[1:8,1:4], format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 ## Overview of Data
 
 The following shows the different number of samples for the different sample sources.
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhIDwtIGRhdGEudGFibGU6OmRhdGEudGFibGUoY29udHJvbGxlcl92c19hcnRfbWV0YWRhdGEpIiwiY29udHJvbGxlcl92c19hcnRfbWV0YWRhdGFbLCAuKGNvdW50ID0gLk4pLCBieSA9IGNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhJFNvdXJjZV0iXX0= -->
-
 ```r
-controller_vs_art_metadata <- data.table::data.table(controller_vs_art_metadata)
-controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Source]
+art_v_ec_meta <- data.table::data.table(art_v_ec_meta)
+art_v_ec_meta[, .(count = .N), by = art_v_ec_meta$Source]
 ```
 
-
-
-<!-- rnb-source-end -->
-<div data-pagedtable="false">
-  <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["controller_vs_art_metadata"],"name":[1],"type":["chr"],"align":["left"]},{"label":["count"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"LN","2":"24"},{"1":"PB","2":"24"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+```
+##    art_v_ec_meta count
+##           <char> <int>
+## 1:            LN    24
+## 2:            PB    24
+```
 
 The following shows the different number of samples for the different phenotypes.
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjoiY29udHJvbGxlcl92c19hcnRfbWV0YWRhdGFbLCAuKGNvdW50ID0gLk4pLCBieSA9IGNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhJFBoZW5vdHlwZV0ifQ== -->
-
 ```r
-controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Phenotype]
+art_v_ec_meta[, .(count = .N), by = art_v_ec_meta$Phenotype]
 ```
 
-
-
-<!-- rnb-source-end -->
-<div data-pagedtable="false">
-  <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["controller_vs_art_metadata"],"name":[1],"type":["chr"],"align":["left"]},{"label":["count"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"ART","2":"6"},{"1":"EC","2":"18"},{"1":"VC","2":"24"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+```
+##    art_v_ec_meta count
+##           <char> <int>
+## 1:           ART     6
+## 2:            EC    18
+## 3:            VC    24
+```
 
 ## Visualizing Expression Data
 
@@ -1748,14 +1470,6 @@ controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Phen
 
 Visualizing data via comparing centers with use of Boxplots.
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImxvZ19jb250cm9sbGVyX3ZzX2FydF9leHByIDwtIGxvZzIoY29udHJvbGxlcl92c19hcnRfZXhwcikgIyBMb2cyIGFsbCBleHByZXNzaW9uIGNvdW50cyIsIiIsImNlbnRlcl9kZXZpYXRpb25fcGxvdCA8LSBmdW5jdGlvbihncmFwaGVkX2RhdGEsIHRpdGxlKSB7XG4gIGJveHBsb3QoZ3JhcGhlZF9kYXRhLCB4bGFiID0gXCJTYW1wbGVzXCIsIHlsYWIgPSBcIkxvZzIgRXhwci5cIixcbiAgbGFzID0gMiwgY2V4ID0gMC41LCBjZXgubGFiID0gMC41LFxuICBjZXguYXhpcyA9IDAuNSwgbWFpbiA9IHRpdGxlKVxuXG4gIGFibGluZShcbiAgICBoID0gbWVkaWFuKGFwcGx5KGdyYXBoZWRfZGF0YSwgMiwgbWVkaWFuKSksXG4gICAgY29sID0gXCJkYXJrcmVkXCIsXG4gICAgbHdkID0gMSxcbiAgICBsdHkgPSBcImRhc2hlZFwiXG4gIClcbn0iLCIiLCJjZW50ZXJfZGV2aWF0aW9uX3Bsb3QobG9nX2NvbnRyb2xsZXJfdnNfYXJ0X2V4cHIsIFwiQ0Q4KyBUIENlbGwgR2VuZSBFeHByZXNzaW9uIGluIEhJViBQYXRpZW50c1wiKSJdfQ== -->
 
 ```r
 log_controller_vs_art_expr <- log2(controller_vs_art_expr) # Log2 all expression counts
@@ -1776,21 +1490,7 @@ center_deviation_plot <- function(graphed_data, title) {
 center_deviation_plot(log_controller_vs_art_expr, "CD8+ T Cell Gene Expression in HIV Patients")
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-22-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
 
 These series of boxplots shows the distribution of expressions across all genes and the skew of the data for each sample taken. The darkgreen line shows the median across all the data points. To elaborate, horizontally, each sample is presented and labelled. Vertically is the $log_2$ of the expression levels for the variety of genes.
 
@@ -1800,14 +1500,6 @@ From this, we can see that there are a few samples that have wildly different ex
 
 Continuing visualization with density plot.
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgVE9ETyBjaGVjayBsYWJlbHMiLCIiLCJkZW5zaXR5X3Bsb3QgPC0gZnVuY3Rpb24oZ3JhcGhlZF9kYXRhLCB0aXRsZSkge1xuICBjb3VudHNfZGVuc2l0eSA8LSBhcHBseShsb2cyKGdyYXBoZWRfZGF0YSksIDIsIGRlbnNpdHkpXG4gICNjYWxjdWxhdGUgdGhlIGxpbWl0cyBhY3Jvc3MgYWxsIHRoZSBzYW1wbGVzXG4gIHhsaW0gPC0gMDsgeWxpbSA8LSAwXG4gIGZvciAoaSBpbiAxOmxlbmd0aChjb3VudHNfZGVuc2l0eSkpIHtcbiAgICB4bGltIDwtIHJhbmdlKGMoeGxpbSwgY291bnRzX2RlbnNpdHlbW2ldXSR4KSk7XG4gICAgeWxpbSA8LSByYW5nZShjKHlsaW0sIGNvdW50c19kZW5zaXR5W1tpXV0keSkpXG4gIH1cblxuICBjb2xzIDwtIHJhaW5ib3cobGVuZ3RoKGNvdW50c19kZW5zaXR5KSlcbiAgbHR5cyA8LSByZXAoMSwgbGVuZ3RoKGNvdW50c19kZW5zaXR5KSlcblxuICAjcGxvdCB0aGUgZmlyc3QgZGVuc2l0eSBwbG90IHRvIGluaXRpYWxpemUgdGhlIHBsb3RcbiAgcGxvdChjb3VudHNfZGVuc2l0eVtbMV1dLCB4bGltPXhsaW0sIHlsaW09eWxpbSwgdHlwZT1cIm5cIixcbiAgICB5bGFiPVwiU21vb3RoaW5nIGRlbnNpdHkgb2YgbG9nMi1DUE1cIixcbiAgICBtYWluPXRpdGxlLCBjZXgubGFiID0gMC44NSlcblxuICAjcGxvdCBlYWNoIGxpbmVcbiAgZm9yIChpIGluIDE6bGVuZ3RoKGNvdW50c19kZW5zaXR5KSlcbiAgICBsaW5lcyhjb3VudHNfZGVuc2l0eVtbaV1dLCBjb2w9Y29sc1tpXSwgbHR5PWx0eXNbaV0pXG5cbiAgI2NyZWF0ZSBsZWdlbmRcbiAgbGVnZW5kKFwidG9wcmlnaHRcIiwgY29sbmFtZXMoZ3JhcGhlZF9kYXRhKSxcbiAgICBjb2w9Y29scywgbHR5PWx0eXMsIGNleD0wLjc1LFxuICAgIGJvcmRlciA9XCJibHVlXCIsIHRleHQuY29sID0gXCJncmVlbjRcIixcbiAgICBtZXJnZSA9IFRSVUUsIGJnID0gXCJncmF5OTBcIilcbn0iLCIiLCJkZW5zaXR5X3Bsb3QoY29udHJvbGxlcl92c19hcnRfZXhwciwgXCJFeHByZXNzaW9uIERlbnNpdHkgQ3VydmVcIikiXX0= -->
 
 ```r
 # TODO check labels
@@ -1843,21 +1535,7 @@ density_plot <- function(graphed_data, title) {
 density_plot(controller_vs_art_expr, "Expression Density Curve")
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-23-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png)
 
 This density plot shows the density of different $log_2$ expression levels for different genes where the smoothed density is displayed on the vertical axis and the value corresponding to the density is shown on the horizontal axis. The different colours represent the different samples.
 
@@ -1867,14 +1545,6 @@ From this visualization, we can see there seems to be certain levels of expressi
 
 We will begin attempting to clean up the variations seen in the data across different samples by requiring a minimum of $30$ samples where the CPM of the expression value is greater than $1$.
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbIm1pbl9udW1fc2FtcGxlcyA8LSAzMCIsImRhdGFfbWF0cml4IDwtIGFzLm1hdHJpeChjb250cm9sbGVyX3ZzX2FydF9leHByKSIsIiIsIiMgZ2V0IHJpZCBvZiBsb3cgY291bnRzIiwiZmlsdGVyZWRfY29udHJvbGxlcl92c19hcnRfZXhwciA9IGRhdGFfbWF0cml4W1xuICByb3dTdW1zKGNwbShkYXRhX21hdHJpeCkgPjEpID4gbWluX251bV9zYW1wbGVzXG4sXSIsIiIsInBhcihtZnJvdz1jKDEsIDIpKSIsImRlbnNpdHlfcGxvdChjb250cm9sbGVyX3ZzX2FydF9leHByLCBcIk9yaWdpbmFsXCIpIiwiZGVuc2l0eV9wbG90KGZpbHRlcmVkX2NvbnRyb2xsZXJfdnNfYXJ0X2V4cHIsIFwiQWZ0ZXIgRmlsdGVyaW5nXCIpIl19 -->
 
 ```r
 min_num_samples <- 30
@@ -1890,31 +1560,11 @@ density_plot(controller_vs_art_expr, "Original")
 density_plot(filtered_controller_vs_art_expr, "After Filtering")
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-24-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjoicGFyKG1mcm93PWMoMSwgMSkpIn0= -->
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
 
 ```r
 par(mfrow=c(1, 1))
 ```
-
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
 
 By doing so, we see we've reduced the variation at the points where there is an increase in differences between different samples in terms of expression level density. However, there is still quite a bit of variation in general in terms of density distribution across samples. A total of 6416 was removed due to filtering. The exact statistical method of removing outliers was not described in detail by the original paper [@collinsCytolyticCD8Cells2023].
 
@@ -1923,1137 +1573,509 @@ By doing so, we see we've reduced the variation at the points where there is an 
 We will now apply trimmed mean of m-values or TMM to normalize the data further. We choose to apply TMM as we expect that most genes are not differentially. expressed. Furthermore, as the process to procure this data contains many technically based areas of potentially introducing variation, TMM may help by trimming off extreme values likely caused by technical variation.
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbInBoZW5vdHlwZV9kZ2UgPC0gREdFTGlzdChjb3VudHM9ZmlsdGVyZWRfY29udHJvbGxlcl92c19hcnRfZXhwciwgZ3JvdXA9Y29udHJvbGxlcl92c19hcnRfbWV0YWRhdGEkUGhlbm90eXBlKSIsInBoZW5vdHlwZV9kZ2UgPC0gY2FsY05vcm1GYWN0b3JzKHBoZW5vdHlwZV9kZ2UpIiwibm9ybWVkX2NvbnRyb2xsZXJfdnNfYXJ0IDwtIGNwbShwaGVub3R5cGVfZGdlKSJdfQ== -->
-
 ```r
-phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
+phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=art_v_ec_meta$Phenotype)
 phenotype_dge <- calcNormFactors(phenotype_dge)
-normed_controller_vs_art <- cpm(phenotype_dge)
+n_ctrl_vs_art <- cpm(phenotype_dge)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbInBhcihtZnJvdz1jKDIsIDIpKSIsImRlbnNpdHlfcGxvdChmaWx0ZXJlZF9jb250cm9sbGVyX3ZzX2FydF9leHByLCBcIk9yaWdpbmFsXCIpIiwiZGVuc2l0eV9wbG90KG5vcm1lZF9jb250cm9sbGVyX3ZzX2FydCwgXCJUTU1cIikiLCJjZW50ZXJfZGV2aWF0aW9uX3Bsb3QobG9nMihmaWx0ZXJlZF9jb250cm9sbGVyX3ZzX2FydF9leHByKSwgXCJPcmlnaW5hbFwiKSJdfQ== -->
 
 ```r
 par(mfrow=c(2, 2))
 density_plot(filtered_controller_vs_art_expr, "Original")
-density_plot(normed_controller_vs_art, "TMM")
+density_plot(n_ctrl_vs_art, "TMM")
 center_deviation_plot(log2(filtered_controller_vs_art_expr), "Original")
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxIGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 1 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 1 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyIGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 2 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 2 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzIGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 3 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 3 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 4 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 4 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA1IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 5 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 5 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA2IGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 6 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 6 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA3IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 7 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 7 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA4IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 8 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 8 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA5IGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 9 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 9 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 10 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 10 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 11 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 11 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 12 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 12 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 13 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 13 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 14 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 14 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 15 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 15 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 16 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 16 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 17 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 17 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 18 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 18 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxOSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 19 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 19 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 20 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 20 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 21 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 21 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 22 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 22 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 23 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 23 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 24 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 24 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 25 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 25 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNiBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 26 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 26 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 27 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 27 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 28 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 28 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyOSBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 29 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 29 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 30 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 30 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 31 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 31 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMiBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 32 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 32 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 33 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 33 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 34 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 34 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNSBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 35 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 35 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 36 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 36 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 37 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 37 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 38 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 38 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzOSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 39 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 39 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 40 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 40 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 41 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 41 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 42 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 42 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 43 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 43 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 44 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 44 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 45 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 45 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 46 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 46 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 47 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 47 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0OCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 48 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 48 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-source-begin eyJkYXRhIjoiY2VudGVyX2RldmlhdGlvbl9wbG90KGxvZzIobm9ybWVkX2NvbnRyb2xsZXJfdnNfYXJ0KSwgXCJUTU1cIikifQ== -->
 
 ```r
-center_deviation_plot(log2(normed_controller_vs_art), "TMM")
+center_deviation_plot(log2(n_ctrl_vs_art), "TMM")
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxIGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 1 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 1 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyIGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 2 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 2 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzIGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 3 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 3 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 4 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 4 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA1IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 5 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 5 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA2IGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 6 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 6 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA3IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 7 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 7 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA4IGlzIG5vdCBkcmF3blxuIn0= -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 8 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 8 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA5IGlzIG5vdCBkcmF3blxuIn0= -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 9 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 9 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 10 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 10 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 11 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 11 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 12 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 12 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxMyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 13 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 13 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 14 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 14 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 15 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 15 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 16 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 16 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxNyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 17 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 17 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 18 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 18 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAxOSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 19 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 19 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMCBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 20 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 20 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 21 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 21 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 22 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 22 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyMyBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 23 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 23 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 24 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 24 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 25 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 25 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 26 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 26 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyNyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 27 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 27 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 28 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 28 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAyOSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 29 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 29 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 30 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 30 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 31 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 31 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 32 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 32 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzMyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 33 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 33 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 34 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 34 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 35 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 35 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 36 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 36 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzNyBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 37 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 37 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzOCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 38 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 38 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCAzOSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 39 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 39 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MCBpcyBub3QgZHJhd25cbiJ9 -->
 
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 40 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 40 is not drawn
 ```
 
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 41 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 41 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 42 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 42 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0MyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 43 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 43 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 44 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 44 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NSBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 45 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 45 is not drawn
 ```
-
-
 
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NiBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 46 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 46 is not drawn
 ```
-
 
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0NyBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 47 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 47 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
 
-<!-- rnb-warning-begin eyJkYXRhIjoiV2FybmluZyBpbiBicGx0KGF0W2ldLCB3aWQgPSB3aWR0aFtpXSwgc3RhdHMgPSB6JHN0YXRzWywgaV0sIG91dCA9XG56JG91dFt6JGdyb3VwID09IDogT3V0bGllciAoLUluZikgaW4gYm94cGxvdCA0OCBpcyBub3QgZHJhd25cbiJ9 -->
-
 ```
-Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
-z$out[z$group == : Outlier (-Inf) in boxplot 48 is not drawn
+## Warning in bplt(at[i], wid = width[i], stats = z$stats[, i], out =
+## z$out[z$group == : Outlier (-Inf) in boxplot 48 is not drawn
 ```
-
-
-
-<!-- rnb-warning-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-26-1.png" width="672" />
-
-<!-- rnb-plot-end -->
 
-<!-- rnb-source-begin eyJkYXRhIjoicGFyKG1mcm93PWMoMSwgMSkpIn0= -->
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
 
 ```r
 par(mfrow=c(1, 1))
 ```
-
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
 
 Completing the TMM show a vast improvement in terms of variation in distribution of expression levels and the centers of the expression levels.
 
@@ -3064,75 +2086,31 @@ We can visualize the difference between samples via plotting them on a multidime
 To start, we will color the points first based on the source of the sample. The MDS plot will be generated using the limma package [@ritchieLimmaPowersDifferential2015].
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbInBsb3RNRFMocGhlbm90eXBlX2RnZSwgbGFiZWxzPU5VTEwsIHBjaCA9IDEsIGNvbCA9IGMoXCJyZWRcIixcImJsdWVcIilbZmFjdG9yKGNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhJFNvdXJjZSldKSIsImxlZ2VuZChcInRvcHJpZ2h0XCIsXG4gIGxlZ2VuZD1sZXZlbHMoZmFjdG9yKGNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhJFNvdXJjZSkpLFxuICBwY2g9YygxKSwgY29sPSBjKFwicmVkXCIsXCJibHVlXCIpLHRpdGxlPVwiQ2xhc3NcIixcbiAgYnR5ID0gJ24nLCBjZXggPSAwLjc1KSJdfQ== -->
-
 ```r
-plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
+plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(art_v_ec_meta$Source)])
 legend("topright",
-  legend=levels(factor(controller_vs_art_metadata$Source)),
+  legend=levels(factor(art_v_ec_meta$Source)),
   pch=c(1), col= c("red","blue"),title="Class",
   bty = 'n', cex = 0.75)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-27-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
 
 Looking at the data categorized by source, we see no substantial differences between the sources in that where there are lymph node (LN) samples, there are also peripheral blood (PB) samples in a similar area.
 
 To continue, let's color based on the phenotype of the sample.
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbInBsb3RNRFMocGhlbm90eXBlX2RnZSwgbGFiZWxzPU5VTEwscGNoPTEsIGNvbCA9IGMoXCJyZWRcIixcIm9yYW5nZVwiLFwicHVycGxlXCIpW2ZhY3Rvcihjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YSRQaGVub3R5cGUpXSkiLCJsZWdlbmQoXCJ0b3ByaWdodFwiLFxuICBsZWdlbmQ9bGV2ZWxzKGZhY3Rvcihjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YSRQaGVub3R5cGUpKSxcbiAgcGNoPWMoMSksIGNvbD1cbmMoXCJyZWRcIixcIm9yYW5nZVwiLFwicHVycGxlXCIpLHRpdGxlPVwiQ2xhc3NcIixcbiAgYnR5ID0gJ24nLCBjZXggPSAwLjc1KSJdfQ== -->
-
 ```r
-plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
+plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(art_v_ec_meta$Phenotype)])
 legend("topright",
-  legend=levels(factor(controller_vs_art_metadata$Phenotype)),
+  legend=levels(factor(art_v_ec_meta$Phenotype)),
   pch=c(1), col=
 c("red","orange","purple"),title="Class",
   bty = 'n', cex = 0.75)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-28-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png)
 
 In stark contrast, to the previous color categories, it seems that there are forms of clusters between ART and EC. Furthermore, a large portion of the viremic controllers are also clustered by themselves apart from the other two clusters. Lastly, there exists a third cluster comprised of samples from EC patients, and controls.
 
@@ -3145,46 +2123,16 @@ Interpreting results was based on separate review material [@fullerMolecularClas
 Shows the variability of gene expression relative to the mean for a given counts per million (CPM). Biological Coefficient of Variation (BCV) was plotted with edgeR [@chenEdgeRPowerfulDifferential2024].
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbIm1vZGVsX2Rlc2lnbiA8LSBtb2RlbC5tYXRyaXgofmNvbnRyb2xsZXJfdnNfYXJ0X21ldGFkYXRhJFBoZW5vdHlwZStjb250cm9sbGVyX3ZzX2FydF9tZXRhZGF0YSRTb3VyY2UpIiwicGhlbm90eXBlX2RnZSA8LSBlc3RpbWF0ZURpc3AocGhlbm90eXBlX2RnZSwgbW9kZWxfZGVzaWduKSIsInBsb3RCQ1YocGhlbm90eXBlX2RnZSwgY29sLnRhZ3dpc2UgPSBcImJsYWNrXCIsY29sLmNvbW1vbiA9IFwicmVkXCIsKSJdfQ== -->
-
 ```r
-model_design <- model.matrix(~controller_vs_art_metadata$Phenotype+controller_vs_art_metadata$Source)
+model_design <- model.matrix(~art_v_ec_meta$Phenotype+art_v_ec_meta$Source)
 phenotype_dge <- estimateDisp(phenotype_dge, model_design)
 plotBCV(phenotype_dge, col.tagwise = "black",col.common = "red",)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-29-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19-1.png)
 
 The produced figure indicates that for more highly expressed genes, the biological coefficient of variation decreases. This trend only seems to occur after approximately 3 $\logCPM$. This may further be interpreted to indicating there is a decrease in the number of differential genes as the expression counts increase. The following plot was generated with use of edgeR [@chenEdgeRPowerfulDifferential2024].
 
-
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjoicGxvdE1lYW5WYXIocGhlbm90eXBlX2RnZSwgc2hvdy5yYXcudmFycyA9IFRSVUUsXG4gIHNob3cudGFnd2lzZS52YXJzPVRSVUUsIE5CbGluZT1UUlVFLFxuICBzaG93LmF2ZS5yYXcudmFycyA9IFRSVUUsc2hvdy5iaW5uZWQuY29tbW9uLmRpc3AudmFyc1xuPSBUUlVFKSJ9 -->
 
 ```r
 plotMeanVar(phenotype_dge, show.raw.vars = TRUE,
@@ -3193,21 +2141,7 @@ plotMeanVar(phenotype_dge, show.raw.vars = TRUE,
 = TRUE)
 ```
 
-
-
-<!-- rnb-source-end -->
-
-<!-- rnb-plot-begin -->
-
-<img src="/home/coder/.vscode-R/tmp/7b2bcd8d66e920d5d4208317b396629e93ccbffe8078c2c7ba9cfbe056375de7_files/figure-html/unnamed-chunk-30-1.png" width="672" />
-
-<!-- rnb-plot-end -->
-
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
 
 This figure confirms the assumption that the data follows the negatively binomial distribution much closely. The blue line shows the negative binomial distribution.
 
@@ -3216,23 +2150,15 @@ This figure confirms the assumption that the data follows the negatively binomia
 We will remap all given Ensembl Stable IDs to HUGO maps to ensure IDs are correct. Parsing given naming scheme will require use of stringr [@wickhamStringrSimpleConsistent2023]. Fetching based on Stable Ensembl gene IDs to retrieve HUGO symbols will be done through the biomaRt package [@durinckBioMartBioconductorPowerful2005].
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbImVuc2VtYmwgPSB1c2VEYXRhc2V0KFwiaHNhcGllbnNfZ2VuZV9lbnNlbWJsXCIsbWFydD11c2VNYXJ0KFwiZW5zZW1ibFwiKSkiLCIiLCIiLCJpZHMyY29udmVydCA8LSBsYXBwbHkocm93bmFtZXMobm9ybWVkX2NvbnRyb2xsZXJfdnNfYXJ0KSwgRlVOID0gZnVuY3Rpb24oeCkge1xuICByZXR1cm4odW5saXN0KHN0cl9zcGxpdCh4LCBcIl9cIikpW1sxXV0pXG59KSIsIiIsInJvd25hbWVzKG5vcm1lZF9jb250cm9sbGVyX3ZzX2FydCkgPC0gaWRzMmNvbnZlcnQiLCIiLCJjb252ZXJzaW9uX2NhY2hlIDwtIFwiaWRfY29udmVyc2lvbi5yZHNcIiIsIiIsImNvbnZlcnNpb25fY2FjaGVfZmlsZSA8LSBcImlkX2NvbnZlcnNpb24ucmRzXCIiLCJpZiAoZmlsZS5leGlzdHMoY29udmVyc2lvbl9jYWNoZV9maWxlKSkge1xuICBpZF9jb252ZXJzaW9uIDwtIHJlYWRSRFMoY29udmVyc2lvbl9jYWNoZV9maWxlKVxufSBlbHNlIHtcbiAgaWRfY29udmVyc2lvbiA8LSBnZXRCTShhdHRyaWJ1dGVzID1cbiAgICBjKFwiZW5zZW1ibF9nZW5lX2lkXCIsXCJoZ25jX3N5bWJvbFwiKSxcbiAgICBmaWx0ZXJzID0gYyhcImVuc2VtYmxfZ2VuZV9pZFwiKSxcbiAgICB2YWx1ZXMgPSB1bmxpc3QoaWRzMmNvbnZlcnQpLFxuICAgIG1hcnQgPSBlbnNlbWJsXG4gIClcbiAgc2F2ZVJEUyhpZF9jb252ZXJzaW9uLCBjb252ZXJzaW9uX2NhY2hlX2ZpbGUpXG59IiwiIiwicmVhbm5vdF9ub3JtX2NvbnRyb2xsZXJfdnNfYXJ0IDwtIG1lcmdlKFxuICB4ID0gaWRfY29udmVyc2lvbixcbiAgeSA9IG5vcm1lZF9jb250cm9sbGVyX3ZzX2FydCxcbiAgYnkueCA9IDEsXG4gIGJ5LnkgPSAwLFxuICBhbGwueSA9IFRSVUVcbikiLCIiLCJrYWJsZShyZWFubm90X25vcm1fY29udHJvbGxlcl92c19hcnRbMTo4LDE6OF0sIGZvcm1hdCA9IFwiaHRtbFwiKSJdfQ== -->
-
 ```r
-ensembl = useDataset("hsapiens_gene_ensembl",mart=useMart("ensembl"))
+ensembl <- useDataset("hsapiens_gene_ensembl",mart=useMart("ensembl"))
 
 
-ids2convert <- lapply(rownames(normed_controller_vs_art), FUN = function(x) {
+ids2convert <- lapply(row.names(n_ctrl_vs_art), FUN = function(x) {
   return(unlist(str_split(x, "_"))[[1]])
 })
-
-rownames(normed_controller_vs_art) <- ids2convert
+ensembl_id_n_ctrl_vs_art <- n_ctrl_vs_art
+row.names(ensembl_id_n_ctrl_vs_art) <- ids2convert
 
 conversion_cache <- "id_conversion.rds"
 
@@ -3249,20 +2175,17 @@ if (file.exists(conversion_cache_file)) {
   saveRDS(id_conversion, conversion_cache_file)
 }
 
-reannot_norm_controller_vs_art <- merge(
+annot_n_ec_v_art <- merge(
   x = id_conversion,
-  y = normed_controller_vs_art,
+  y = ensembl_id_n_ctrl_vs_art,
   by.x = 1,
   by.y = 0,
   all.y = TRUE
 )
 
-kable(reannot_norm_controller_vs_art[1:8,1:8], format = "html")
+kable(annot_n_ec_v_art[1:8,1:8], format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -3360,33 +2283,16 @@ kable(reannot_norm_controller_vs_art[1:8,1:8], format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 There were a few symbols that were not successfully matched. Let's take a look.
 
 
-<!-- rnb-text-end -->
-
-
-<!-- rnb-chunk-begin -->
-
-
-<!-- rnb-source-begin eyJkYXRhIjpbIm1pc3NpbmdfaHVnb19ub3JtX2NvbnRyb2xsZXJfdnNfYXJ0IDwtIHJlYW5ub3Rfbm9ybV9jb250cm9sbGVyX3ZzX2FydFtcbiAgaXMubmEocmVhbm5vdF9ub3JtX2NvbnRyb2xsZXJfdnNfYXJ0JGhnbmNfc3ltYm9sKSxcbl0iLCJrYWJsZShtaXNzaW5nX2h1Z29fbm9ybV9jb250cm9sbGVyX3ZzX2FydFssMTo4XSwgZm9ybWF0ID0gXCJodG1sXCIpIl19 -->
-
 ```r
-missing_hugo_norm_controller_vs_art <- reannot_norm_controller_vs_art[
-  is.na(reannot_norm_controller_vs_art$hgnc_symbol),
+missing_hugo_norm_controller_vs_art <- annot_n_ec_v_art[
+  is.na(annot_n_ec_v_art$hgnc_symbol),
 ]
 kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
 ```
 
-
-
-<!-- rnb-source-end -->
 <table>
  <thead>
   <tr>
@@ -3403,6 +2309,193 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
  </thead>
 <tbody>
   <tr>
+   <td style="text-align:left;"> 243 </td>
+   <td style="text-align:left;"> ENSG00000018280 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4897994 </td>
+   <td style="text-align:right;"> 1.2251512 </td>
+   <td style="text-align:right;"> 2.8523748 </td>
+   <td style="text-align:right;"> 1.1844976 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.3602905 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 667 </td>
+   <td style="text-align:left;"> ENSG00000067445 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 10.7190138 </td>
+   <td style="text-align:right;"> 1.0842046 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 1.4880420 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.3591053 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 672 </td>
+   <td style="text-align:left;"> ENSG00000067606 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.9697243 </td>
+   <td style="text-align:right;"> 0.3197334 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 675 </td>
+   <td style="text-align:left;"> ENSG00000067798 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7443760 </td>
+   <td style="text-align:right;"> 0.4029627 </td>
+   <td style="text-align:right;"> 1.6222102 </td>
+   <td style="text-align:right;"> 1.3221044 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.3001271 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 781 </td>
+   <td style="text-align:left;"> ENSG00000072062 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1910015 </td>
+   <td style="text-align:right;"> 0.5421023 </td>
+   <td style="text-align:right;"> 0.2770641 </td>
+   <td style="text-align:right;"> 4.7069615 </td>
+   <td style="text-align:right;"> 2.5689455 </td>
+   <td style="text-align:right;"> 0.4740664 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 811 </td>
+   <td style="text-align:left;"> ENSG00000073417 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 8.4858859 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 1.3853204 </td>
+   <td style="text-align:right;"> 5.1265273 </td>
+   <td style="text-align:right;"> 3.5323001 </td>
+   <td style="text-align:right;"> 2.0159674 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 1162 </td>
+   <td style="text-align:left;"> ENSG00000088727 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.5655934 </td>
+   <td style="text-align:right;"> 1.1636692 </td>
+   <td style="text-align:right;"> 2.1585378 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 0.1362941 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 1174 </td>
+   <td style="text-align:left;"> ENSG00000088992 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 4.8789208 </td>
+   <td style="text-align:right;"> 1.9394486 </td>
+   <td style="text-align:right;"> 0.1349086 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 1480 </td>
+   <td style="text-align:left;"> ENSG00000100350 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 5.6959648 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 1.3783938 </td>
+   <td style="text-align:right;"> 11.8746560 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.6447303 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 1489 </td>
+   <td style="text-align:left;"> ENSG00000100379 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.9035038 </td>
+   <td style="text-align:right;"> 0.4155961 </td>
+   <td style="text-align:right;"> 0.4047258 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.1851660 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 1887 </td>
+   <td style="text-align:left;"> ENSG00000104368 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6540034 </td>
+   <td style="text-align:right;"> 0.9378370 </td>
+   <td style="text-align:right;"> 1.0985591 </td>
+   <td style="text-align:right;"> 1.0833162 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 2.5267740 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2029 </td>
+   <td style="text-align:left;"> ENSG00000105613 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.3586243 </td>
+   <td style="text-align:right;"> 0.4372959 </td>
+   <td style="text-align:right;"> 0.7023575 </td>
+   <td style="text-align:right;"> 1.3855114 </td>
+   <td style="text-align:right;"> 1.5799015 </td>
+   <td style="text-align:right;"> 2.3620359 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2035 </td>
+   <td style="text-align:left;"> ENSG00000105641 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7935048 </td>
+   <td style="text-align:right;"> 0.7047330 </td>
+   <td style="text-align:right;"> 3.9481633 </td>
+   <td style="text-align:right;"> 1.2708391 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.3890146 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2118 </td>
+   <td style="text-align:left;"> ENSG00000106367 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7443760 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 1.5238525 </td>
+   <td style="text-align:right;"> 0.2698172 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.4221992 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2279 </td>
+   <td style="text-align:left;"> ENSG00000108515 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 7.6192625 </td>
+   <td style="text-align:right;"> 0.5396344 </td>
+   <td style="text-align:right;"> 8.0279547 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2304 </td>
+   <td style="text-align:left;"> ENSG00000108733 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0421263 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 9.4436028 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2379 </td>
+   <td style="text-align:left;"> ENSG00000109881 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 4.4662557 </td>
+   <td style="text-align:right;"> 1.6263069 </td>
+   <td style="text-align:right;"> 4.0174293 </td>
+   <td style="text-align:right;"> 1.6189033 </td>
+   <td style="text-align:right;"> 2.2478273 </td>
+   <td style="text-align:right;"> 3.3184649 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 2566 </td>
    <td style="text-align:left;"> ENSG00000112096 </td>
    <td style="text-align:left;"> NA </td>
@@ -3414,6 +2507,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 150.1475001 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 2950 </td>
+   <td style="text-align:left;"> ENSG00000116701 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.7865023 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.8009166 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.5689455 </td>
+   <td style="text-align:right;"> 1.3036826 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 2977 </td>
    <td style="text-align:left;"> ENSG00000116957 </td>
    <td style="text-align:left;"> NA </td>
@@ -3423,6 +2527,94 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 20.5061090 </td>
    <td style="text-align:right;"> 10.5969002 </td>
    <td style="text-align:right;"> 9.7183615 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2982 </td>
+   <td style="text-align:left;"> ENSG00000117016 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.5955008 </td>
+   <td style="text-align:right;"> 4.3368185 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 4.4519842 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3068 </td>
+   <td style="text-align:left;"> ENSG00000118322 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1612265 </td>
+   <td style="text-align:right;"> 2.1033570 </td>
+   <td style="text-align:right;"> 1.1789077 </td>
+   <td style="text-align:right;"> 1.8388044 </td>
+   <td style="text-align:right;"> 0.9505098 </td>
+   <td style="text-align:right;"> 1.2183507 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3265 </td>
+   <td style="text-align:left;"> ENSG00000120915 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2977504 </td>
+   <td style="text-align:right;"> 15.2818641 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 13.7606784 </td>
+   <td style="text-align:right;"> 16.3770277 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3395 </td>
+   <td style="text-align:left;"> ENSG00000123119 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.1993279 </td>
+   <td style="text-align:right;"> 7.1503294 </td>
+   <td style="text-align:right;"> 1.9657697 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 10.2822044 </td>
+   <td style="text-align:right;"> 3.8861594 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3550 </td>
+   <td style="text-align:left;"> ENSG00000125319 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.6140154 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 10.7850109 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3814 </td>
+   <td style="text-align:left;"> ENSG00000128973 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0406376 </td>
+   <td style="text-align:right;"> 0.7191891 </td>
+   <td style="text-align:right;"> 0.5541282 </td>
+   <td style="text-align:right;"> 0.4047258 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3824 </td>
+   <td style="text-align:left;"> ENSG00000129167 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.2752542 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 1.8632560 </td>
+   <td style="text-align:right;"> 9.9265757 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 5.6876118 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3903 </td>
+   <td style="text-align:left;"> ENSG00000130368 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3502980 </td>
+   <td style="text-align:right;"> 1.6497980 </td>
+   <td style="text-align:right;"> 1.3839351 </td>
+   <td style="text-align:right;"> 0.8081026 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 0.4965846 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 3913 </td>
@@ -3447,6 +2639,182 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 44.3204691 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 3970 </td>
+   <td style="text-align:left;"> ENSG00000130958 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.9353775 </td>
+   <td style="text-align:right;"> 0.3614015 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 8.6341512 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.5554981 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4464 </td>
+   <td style="text-align:left;"> ENSG00000136231 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4778894 </td>
+   <td style="text-align:right;"> 0.9035038 </td>
+   <td style="text-align:right;"> 2.0946045 </td>
+   <td style="text-align:right;"> 2.3743916 </td>
+   <td style="text-align:right;"> 0.6326028 </td>
+   <td style="text-align:right;"> 0.7999871 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4568 </td>
+   <td style="text-align:left;"> ENSG00000137098 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.5730046 </td>
+   <td style="text-align:right;"> 0.3614015 </td>
+   <td style="text-align:right;"> 0.8311923 </td>
+   <td style="text-align:right;"> 3.9123497 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.9629151 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4648 </td>
+   <td style="text-align:left;"> ENSG00000137821 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.8649649 </td>
+   <td style="text-align:right;"> 1.1799760 </td>
+   <td style="text-align:right;"> 1.5280085 </td>
+   <td style="text-align:right;"> 2.1639341 </td>
+   <td style="text-align:right;"> 0.3724971 </td>
+   <td style="text-align:right;"> 0.7288771 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4823 </td>
+   <td style="text-align:left;"> ENSG00000139531 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3622080 </td>
+   <td style="text-align:right;"> 0.5836635 </td>
+   <td style="text-align:right;"> 0.6995868 </td>
+   <td style="text-align:right;"> 1.3652752 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.8225052 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4885 </td>
+   <td style="text-align:left;"> ENSG00000140297 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6014558 </td>
+   <td style="text-align:right;"> 1.7112363 </td>
+   <td style="text-align:right;"> 1.3853204 </td>
+   <td style="text-align:right;"> 1.2398101 </td>
+   <td style="text-align:right;"> 1.2876839 </td>
+   <td style="text-align:right;"> 1.5264939 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5074 </td>
+   <td style="text-align:left;"> ENSG00000142459 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7428872 </td>
+   <td style="text-align:right;"> 0.9884332 </td>
+   <td style="text-align:right;"> 1.5404763 </td>
+   <td style="text-align:right;"> 1.0833162 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.0826169 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5094 </td>
+   <td style="text-align:left;"> ENSG00000142733 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6376271 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 2.2934464 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5329 </td>
+   <td style="text-align:left;"> ENSG00000145391 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 4.9099038 </td>
+   <td style="text-align:right;"> 8.7350752 </td>
+   <td style="text-align:right;"> 2.9424206 </td>
+   <td style="text-align:right;"> 1.4030496 </td>
+   <td style="text-align:right;"> 7.0646002 </td>
+   <td style="text-align:right;"> 0.4681406 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5342 </td>
+   <td style="text-align:left;"> ENSG00000145685 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 7.8903851 </td>
+   <td style="text-align:right;"> 7.7701331 </td>
+   <td style="text-align:right;"> 0.6926602 </td>
+   <td style="text-align:right;"> 0.1349086 </td>
+   <td style="text-align:right;"> 4.4956547 </td>
+   <td style="text-align:right;"> 0.2358480 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5384 </td>
+   <td style="text-align:left;"> ENSG00000146197 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4466256 </td>
+   <td style="text-align:right;"> 5.7824246 </td>
+   <td style="text-align:right;"> 0.4155961 </td>
+   <td style="text-align:right;"> 0.2698172 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 6.7542612 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5427 </td>
+   <td style="text-align:left;"> ENSG00000146856 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.2752542 </td>
+   <td style="text-align:right;"> 2.8912123 </td>
+   <td style="text-align:right;"> 1.6623845 </td>
+   <td style="text-align:right;"> 1.3490861 </td>
+   <td style="text-align:right;"> 9.3124275 </td>
+   <td style="text-align:right;"> 0.4740664 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5645 </td>
+   <td style="text-align:left;"> ENSG00000150394 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6718684 </td>
+   <td style="text-align:right;"> 2.2641806 </td>
+   <td style="text-align:right;"> 2.1139990 </td>
+   <td style="text-align:right;"> 2.5430273 </td>
+   <td style="text-align:right;"> 0.9665657 </td>
+   <td style="text-align:right;"> 1.2029435 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5693 </td>
+   <td style="text-align:left;"> ENSG00000151320 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7354434 </td>
+   <td style="text-align:right;"> 0.7499082 </td>
+   <td style="text-align:right;"> 1.3742379 </td>
+   <td style="text-align:right;"> 1.1791013 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 0.8426531 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5715 </td>
+   <td style="text-align:left;"> ENSG00000151575 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4083593 </td>
+   <td style="text-align:right;"> 1.2649054 </td>
+   <td style="text-align:right;"> 1.1470453 </td>
+   <td style="text-align:right;"> 0.6745431 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 0.9457625 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5880 </td>
+   <td style="text-align:left;"> ENSG00000154258 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0867889 </td>
+   <td style="text-align:right;"> 1.0733626 </td>
+   <td style="text-align:right;"> 1.6887056 </td>
+   <td style="text-align:right;"> 1.1372796 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.6189368 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 5959 </td>
    <td style="text-align:left;"> ENSG00000155640 </td>
    <td style="text-align:left;"> NA </td>
@@ -3456,6 +2824,248 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 20.1013832 </td>
    <td style="text-align:right;"> 3.8534183 </td>
    <td style="text-align:right;"> 4.9776974 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6130 </td>
+   <td style="text-align:left;"> ENSG00000158406 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.2331279 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 3.9123497 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.0666494 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6143 </td>
+   <td style="text-align:left;"> ENSG00000158555 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.3853204 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6221 </td>
+   <td style="text-align:left;"> ENSG00000159788 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.9035038 </td>
+   <td style="text-align:right;"> 0.8824491 </td>
+   <td style="text-align:right;"> 1.0428436 </td>
+   <td style="text-align:right;"> 0.9697769 </td>
+   <td style="text-align:right;"> 0.5558429 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6311 </td>
+   <td style="text-align:left;"> ENSG00000160767 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.8977174 </td>
+   <td style="text-align:right;"> 0.9667491 </td>
+   <td style="text-align:right;"> 0.9544858 </td>
+   <td style="text-align:right;"> 2.5079511 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.8515095 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6394 </td>
+   <td style="text-align:left;"> ENSG00000162174 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.2222653 </td>
+   <td style="text-align:right;"> 0.5421023 </td>
+   <td style="text-align:right;"> 3.8788973 </td>
+   <td style="text-align:right;"> 0.8553206 </td>
+   <td style="text-align:right;"> 5.1443134 </td>
+   <td style="text-align:right;"> 0.9457625 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6742 </td>
+   <td style="text-align:left;"> ENSG00000164406 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2977504 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 0.9711096 </td>
+   <td style="text-align:right;"> 2.9679895 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6815 </td>
+   <td style="text-align:left;"> ENSG00000165084 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.9602450 </td>
+   <td style="text-align:right;"> 0.3614015 </td>
+   <td style="text-align:right;"> 0.7023575 </td>
+   <td style="text-align:right;"> 1.2182248 </td>
+   <td style="text-align:right;"> 0.6390252 </td>
+   <td style="text-align:right;"> 0.9481328 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6880 </td>
+   <td style="text-align:left;"> ENSG00000165684 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.4241294 </td>
+   <td style="text-align:right;"> 2.8912123 </td>
+   <td style="text-align:right;"> 1.1082564 </td>
+   <td style="text-align:right;"> 0.2698172 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 5.2147306 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7028 </td>
+   <td style="text-align:left;"> ENSG00000166869 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6093408 </td>
+   <td style="text-align:right;"> 1.4853603 </td>
+   <td style="text-align:right;"> 2.1015311 </td>
+   <td style="text-align:right;"> 1.7457174 </td>
+   <td style="text-align:right;"> 1.2812616 </td>
+   <td style="text-align:right;"> 1.5063460 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7052 </td>
+   <td style="text-align:left;"> ENSG00000167037 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0317051 </td>
+   <td style="text-align:right;"> 1.2649054 </td>
+   <td style="text-align:right;"> 1.4047149 </td>
+   <td style="text-align:right;"> 0.8121498 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 0.7087293 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7129 </td>
+   <td style="text-align:left;"> ENSG00000167601 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7443760 </td>
+   <td style="text-align:right;"> 1.4456062 </td>
+   <td style="text-align:right;"> 1.9394486 </td>
+   <td style="text-align:right;"> 1.0819671 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.8390976 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7335 </td>
+   <td style="text-align:left;"> ENSG00000169169 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4421593 </td>
+   <td style="text-align:right;"> 1.0878186 </td>
+   <td style="text-align:right;"> 1.3867058 </td>
+   <td style="text-align:right;"> 0.3871877 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.1602776 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7804 </td>
+   <td style="text-align:left;"> ENSG00000173715 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.3614015 </td>
+   <td style="text-align:right;"> 0.3463301 </td>
+   <td style="text-align:right;"> 5.5771220 </td>
+   <td style="text-align:right;"> 5.7801274 </td>
+   <td style="text-align:right;"> 1.3036826 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7832 </td>
+   <td style="text-align:left;"> ENSG00000174059 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6550508 </td>
+   <td style="text-align:right;"> 0.8673637 </td>
+   <td style="text-align:right;"> 0.9434032 </td>
+   <td style="text-align:right;"> 1.0037201 </td>
+   <td style="text-align:right;"> 0.7674725 </td>
+   <td style="text-align:right;"> 1.3807184 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7888 </td>
+   <td style="text-align:left;"> ENSG00000174792 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.2341753 </td>
+   <td style="text-align:right;"> 0.4029627 </td>
+   <td style="text-align:right;"> 4.3415943 </td>
+   <td style="text-align:right;"> 1.0860143 </td>
+   <td style="text-align:right;"> 0.2601057 </td>
+   <td style="text-align:right;"> 0.5380654 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7938 </td>
+   <td style="text-align:left;"> ENSG00000175311 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0406376 </td>
+   <td style="text-align:right;"> 1.0733626 </td>
+   <td style="text-align:right;"> 0.9143115 </td>
+   <td style="text-align:right;"> 1.3153590 </td>
+   <td style="text-align:right;"> 1.5445785 </td>
+   <td style="text-align:right;"> 1.0808714 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 7957 </td>
+   <td style="text-align:left;"> ENSG00000175514 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4887519 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.8330808 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8015 </td>
+   <td style="text-align:left;"> ENSG00000176244 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4693981 </td>
+   <td style="text-align:right;"> 0.4065767 </td>
+   <td style="text-align:right;"> 1.2218526 </td>
+   <td style="text-align:right;"> 1.2033848 </td>
+   <td style="text-align:right;"> 0.6550811 </td>
+   <td style="text-align:right;"> 1.1164264 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8048 </td>
+   <td style="text-align:left;"> ENSG00000176749 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 7.0473300 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8092 </td>
+   <td style="text-align:left;"> ENSG00000177369 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1954678 </td>
+   <td style="text-align:right;"> 1.0751696 </td>
+   <td style="text-align:right;"> 0.8935317 </td>
+   <td style="text-align:right;"> 0.8350843 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.6627879 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8252 </td>
+   <td style="text-align:left;"> ENSG00000179406 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.1125390 </td>
+   <td style="text-align:right;"> 8.3122354 </td>
+   <td style="text-align:right;"> 7.3421984 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 5.5702804 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8283 </td>
+   <td style="text-align:left;"> ENSG00000179978 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.7394237 </td>
+   <td style="text-align:right;"> 2.0447330 </td>
+   <td style="text-align:right;"> 11.4186649 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 6.1877519 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 8284 </td>
@@ -3469,6 +3079,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 11.5790722 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 8300 </td>
+   <td style="text-align:left;"> ENSG00000180251 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6342083 </td>
+   <td style="text-align:right;"> 1.1763620 </td>
+   <td style="text-align:right;"> 0.8228803 </td>
+   <td style="text-align:right;"> 0.9457094 </td>
+   <td style="text-align:right;"> 0.6711370 </td>
+   <td style="text-align:right;"> 1.5857522 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8352 </td>
+   <td style="text-align:left;"> ENSG00000181031 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.7865023 </td>
+   <td style="text-align:right;"> 1.0842046 </td>
+   <td style="text-align:right;"> 2.3550448 </td>
+   <td style="text-align:right;"> 1.3558315 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 7.8220958 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 8418 </td>
    <td style="text-align:left;"> ENSG00000182109 </td>
    <td style="text-align:left;"> NA </td>
@@ -3480,6 +3112,105 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 3.3184649 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 8509 </td>
+   <td style="text-align:left;"> ENSG00000183250 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4887519 </td>
+   <td style="text-align:right;"> 4.6982200 </td>
+   <td style="text-align:right;"> 2.6321088 </td>
+   <td style="text-align:right;"> 1.7538120 </td>
+   <td style="text-align:right;"> 7.0646002 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8560 </td>
+   <td style="text-align:left;"> ENSG00000183742 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7503310 </td>
+   <td style="text-align:right;"> 1.7835166 </td>
+   <td style="text-align:right;"> 1.8909624 </td>
+   <td style="text-align:right;"> 1.3598788 </td>
+   <td style="text-align:right;"> 0.3243294 </td>
+   <td style="text-align:right;"> 0.6577672 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8614 </td>
+   <td style="text-align:left;"> ENSG00000184414 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.7299297 </td>
+   <td style="text-align:right;"> 0.3632085 </td>
+   <td style="text-align:right;"> 0.8311923 </td>
+   <td style="text-align:right;"> 2.0991780 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.8343569 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8622 </td>
+   <td style="text-align:left;"> ENSG00000184515 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2977504 </td>
+   <td style="text-align:right;"> 6.3245269 </td>
+   <td style="text-align:right;"> 10.8054995 </td>
+   <td style="text-align:right;"> 2.4283550 </td>
+   <td style="text-align:right;"> 3.8534183 </td>
+   <td style="text-align:right;"> 3.0814317 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8629 </td>
+   <td style="text-align:left;"> ENSG00000184602 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.2770641 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.7925313 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8703 </td>
+   <td style="text-align:left;"> ENSG00000185338 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.8070077 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.6745431 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1185166 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8813 </td>
+   <td style="text-align:left;"> ENSG00000186399 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.8271399 </td>
+   <td style="text-align:right;"> 5.2403223 </td>
+   <td style="text-align:right;"> 5.9721164 </td>
+   <td style="text-align:right;"> 1.8698334 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 0.9836878 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8841 </td>
+   <td style="text-align:left;"> ENSG00000186665 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0421263 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.3853204 </td>
+   <td style="text-align:right;"> 4.0472584 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.7913462 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8922 </td>
+   <td style="text-align:left;"> ENSG00000188004 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.5944533 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0858899 </td>
+   <td style="text-align:right;"> 1.6904049 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.0337449 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 8936 </td>
    <td style="text-align:left;"> ENSG00000188206 </td>
    <td style="text-align:left;"> NA </td>
@@ -3489,6 +3220,72 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 11.9002887 </td>
    <td style="text-align:right;"> 11.9231184 </td>
    <td style="text-align:right;"> 23.8253928 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8953 </td>
+   <td style="text-align:left;"> ENSG00000188368 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4649319 </td>
+   <td style="text-align:right;"> 0.4951201 </td>
+   <td style="text-align:right;"> 1.1248802 </td>
+   <td style="text-align:right;"> 0.9119822 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 3.0280992 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 8962 </td>
+   <td style="text-align:left;"> ENSG00000188486 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 4.7640061 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 0.8094517 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 0.3555498 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9049 </td>
+   <td style="text-align:left;"> ENSG00000196114 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3398767 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 0.0900458 </td>
+   <td style="text-align:right;"> 4.8567100 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9129 </td>
+   <td style="text-align:left;"> ENSG00000196600 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1984453 </td>
+   <td style="text-align:right;"> 1.7799026 </td>
+   <td style="text-align:right;"> 3.0380077 </td>
+   <td style="text-align:right;"> 2.0263274 </td>
+   <td style="text-align:right;"> 1.9267091 </td>
+   <td style="text-align:right;"> 1.1993880 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9284 </td>
+   <td style="text-align:left;"> ENSG00000197769 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.5587233 </td>
+   <td style="text-align:right;"> 1.3769399 </td>
+   <td style="text-align:right;"> 0.9004583 </td>
+   <td style="text-align:right;"> 0.4047258 </td>
+   <td style="text-align:right;"> 1.3165846 </td>
+   <td style="text-align:right;"> 1.4008663 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9525 </td>
+   <td style="text-align:left;"> ENSG00000203601 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6356971 </td>
+   <td style="text-align:right;"> 0.9522931 </td>
+   <td style="text-align:right;"> 1.6402194 </td>
+   <td style="text-align:right;"> 1.2883772 </td>
+   <td style="text-align:right;"> 1.8303737 </td>
+   <td style="text-align:right;"> 1.5359752 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 9538 </td>
@@ -3513,6 +3310,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 9.5085871 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 9625 </td>
+   <td style="text-align:left;"> ENSG00000204577 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4496031 </td>
+   <td style="text-align:right;"> 3.1785265 </td>
+   <td style="text-align:right;"> 1.0085133 </td>
+   <td style="text-align:right;"> 1.2114793 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 0.8497640 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9683 </td>
+   <td style="text-align:left;"> ENSG00000205500 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0093738 </td>
+   <td style="text-align:right;"> 1.4618692 </td>
+   <td style="text-align:right;"> 2.4852649 </td>
+   <td style="text-align:right;"> 1.5447036 </td>
+   <td style="text-align:right;"> 1.2138268 </td>
+   <td style="text-align:right;"> 0.7371733 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 9824 </td>
    <td style="text-align:left;"> ENSG00000213865 </td>
    <td style="text-align:left;"> NA </td>
@@ -3535,6 +3354,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 8.9752624 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 9855 </td>
+   <td style="text-align:left;"> ENSG00000214128 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6674021 </td>
+   <td style="text-align:right;"> 0.3650156 </td>
+   <td style="text-align:right;"> 1.0722380 </td>
+   <td style="text-align:right;"> 1.3666242 </td>
+   <td style="text-align:right;"> 2.8836413 </td>
+   <td style="text-align:right;"> 1.0666494 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9912 </td>
+   <td style="text-align:left;"> ENSG00000215196 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3160567 </td>
+   <td style="text-align:right;"> 2.0075855 </td>
+   <td style="text-align:right;"> 0.9697243 </td>
+   <td style="text-align:right;"> 0.9416621 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.3048678 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 9919 </td>
    <td style="text-align:left;"> ENSG00000215271 </td>
    <td style="text-align:left;"> NA </td>
@@ -3544,6 +3385,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 6.0695384 </td>
    <td style="text-align:right;"> 0.6261805 </td>
    <td style="text-align:right;"> 3.6965329 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9946 </td>
+   <td style="text-align:left;"> ENSG00000218757 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.9353775 </td>
+   <td style="text-align:right;"> 1.2649054 </td>
+   <td style="text-align:right;"> 2.2165127 </td>
+   <td style="text-align:right;"> 1.7538120 </td>
+   <td style="text-align:right;"> 1.9267091 </td>
+   <td style="text-align:right;"> 1.5407158 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 9974 </td>
@@ -3568,6 +3420,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 2.9629151 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 9988 </td>
+   <td style="text-align:left;"> ENSG00000223599 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.1028981 </td>
+   <td style="text-align:right;"> 11.5602548 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 9989 </td>
+   <td style="text-align:left;"> ENSG00000223704 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.9696188 </td>
+   <td style="text-align:right;"> 0.4047697 </td>
+   <td style="text-align:right;"> 0.5541282 </td>
+   <td style="text-align:right;"> 1.3814642 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.3167195 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10018 </td>
+   <td style="text-align:left;"> ENSG00000224699 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.1488752 </td>
+   <td style="text-align:right;"> 1.4456062 </td>
+   <td style="text-align:right;"> 2.3550448 </td>
+   <td style="text-align:right;"> 2.7022195 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 0.7715431 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10025 </td>
    <td style="text-align:left;"> ENSG00000224959 </td>
    <td style="text-align:left;"> NA </td>
@@ -3577,6 +3462,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 10.5255699 </td>
    <td style="text-align:right;"> 1.6055909 </td>
    <td style="text-align:right;"> 3.7925313 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10043 </td>
+   <td style="text-align:left;"> ENSG00000225828 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 4.3039818 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.7965593 </td>
+   <td style="text-align:right;"> 2.8020519 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.6568621 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10047 </td>
@@ -3590,6 +3486,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 1.3617558 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10063 </td>
+   <td style="text-align:left;"> ENSG00000226266 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.2331279 </td>
+   <td style="text-align:right;"> 1.4456062 </td>
+   <td style="text-align:right;"> 1.5238525 </td>
+   <td style="text-align:right;"> 2.0236292 </td>
+   <td style="text-align:right;"> 7.7068365 </td>
+   <td style="text-align:right;"> 3.1999483 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10067 </td>
    <td style="text-align:left;"> ENSG00000226380 </td>
    <td style="text-align:left;"> NA </td>
@@ -3599,6 +3506,50 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 16.3860000 </td>
    <td style="text-align:right;"> 41.4242464 </td>
    <td style="text-align:right;"> 6.2102700 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10071 </td>
+   <td style="text-align:left;"> ENSG00000226726 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.5955008 </td>
+   <td style="text-align:right;"> 3.6140154 </td>
+   <td style="text-align:right;"> 2.2165127 </td>
+   <td style="text-align:right;"> 0.6745431 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.3036826 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10077 </td>
+   <td style="text-align:left;"> ENSG00000227053 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.5308782 </td>
+   <td style="text-align:right;"> 0.7228031 </td>
+   <td style="text-align:right;"> 2.1915769 </td>
+   <td style="text-align:right;"> 1.3005190 </td>
+   <td style="text-align:right;"> 2.8483183 </td>
+   <td style="text-align:right;"> 2.4888487 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10100 </td>
+   <td style="text-align:left;"> ENSG00000227893 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1627152 </td>
+   <td style="text-align:right;"> 0.2927352 </td>
+   <td style="text-align:right;"> 1.2454031 </td>
+   <td style="text-align:right;"> 0.6772412 </td>
+   <td style="text-align:right;"> 0.5523233 </td>
+   <td style="text-align:right;"> 1.2088694 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10101 </td>
+   <td style="text-align:left;"> ENSG00000227946 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2218240 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.1848517 </td>
+   <td style="text-align:right;"> 0.4559911 </td>
+   <td style="text-align:right;"> 5.3979968 </td>
+   <td style="text-align:right;"> 0.7715431 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10103 </td>
@@ -3623,6 +3574,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 1.6592325 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10118 </td>
+   <td style="text-align:left;"> ENSG00000228463 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.3298967 </td>
+   <td style="text-align:right;"> 8.1785168 </td>
+   <td style="text-align:right;"> 0.9309353 </td>
+   <td style="text-align:right;"> 4.2172432 </td>
+   <td style="text-align:right;"> 13.2814483 </td>
+   <td style="text-align:right;"> 6.2967872 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10135 </td>
+   <td style="text-align:left;"> ENSG00000229127 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0421263 </td>
+   <td style="text-align:right;"> 3.4333146 </td>
+   <td style="text-align:right;"> 5.2642177 </td>
+   <td style="text-align:right;"> 0.5315399 </td>
+   <td style="text-align:right;"> 3.8534183 </td>
+   <td style="text-align:right;"> 2.7258819 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10144 </td>
+   <td style="text-align:left;"> ENSG00000229717 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6103883 </td>
+   <td style="text-align:right;"> 0.7318381 </td>
+   <td style="text-align:right;"> 0.4626970 </td>
+   <td style="text-align:right;"> 1.2559992 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.3747926 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10145 </td>
    <td style="text-align:left;"> ENSG00000229729 </td>
    <td style="text-align:left;"> NA </td>
@@ -3634,6 +3618,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 10.7660483 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10181 </td>
+   <td style="text-align:left;"> ENSG00000231205 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0421263 </td>
+   <td style="text-align:right;"> 1.4456062 </td>
+   <td style="text-align:right;"> 1.0486876 </td>
+   <td style="text-align:right;"> 4.4519842 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10214 </td>
    <td style="text-align:left;"> ENSG00000232559 </td>
    <td style="text-align:left;"> NA </td>
@@ -3643,6 +3638,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 7.8273977 </td>
    <td style="text-align:right;"> 8.0279547 </td>
    <td style="text-align:right;"> 4.8153296 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10249 </td>
+   <td style="text-align:left;"> ENSG00000233527 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.6140154 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.9511057 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 2.9629151 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10257 </td>
@@ -3678,6 +3684,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.1185166 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10303 </td>
+   <td style="text-align:left;"> ENSG00000235493 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4674681 </td>
+   <td style="text-align:right;"> 0.4662080 </td>
+   <td style="text-align:right;"> 0.8824491 </td>
+   <td style="text-align:right;"> 0.6313723 </td>
+   <td style="text-align:right;"> 0.6743482 </td>
+   <td style="text-align:right;"> 1.0441313 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10308 </td>
+   <td style="text-align:left;"> ENSG00000235560 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4049405 </td>
+   <td style="text-align:right;"> 0.5421023 </td>
+   <td style="text-align:right;"> 4.7100895 </td>
+   <td style="text-align:right;"> 2.2934464 </td>
+   <td style="text-align:right;"> 0.5009444 </td>
+   <td style="text-align:right;"> 5.9661258 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10333 </td>
+   <td style="text-align:left;"> ENSG00000236393 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1016764 </td>
+   <td style="text-align:right;"> 0.5421023 </td>
+   <td style="text-align:right;"> 1.1539719 </td>
+   <td style="text-align:right;"> 1.0334000 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 0.7952464 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10338 </td>
    <td style="text-align:left;"> ENSG00000236673 </td>
    <td style="text-align:left;"> NA </td>
@@ -3687,6 +3726,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 2.3271736 </td>
    <td style="text-align:right;"> 2.5528896 </td>
    <td style="text-align:right;"> 1.9069322 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10339 </td>
+   <td style="text-align:left;"> ENSG00000236682 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 6.2289380 </td>
+   <td style="text-align:right;"> 0.4553659 </td>
+   <td style="text-align:right;"> 1.9394486 </td>
+   <td style="text-align:right;"> 8.1322911 </td>
+   <td style="text-align:right;"> 0.7738948 </td>
+   <td style="text-align:right;"> 0.8734674 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10344 </td>
+   <td style="text-align:left;"> ENSG00000236829 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2977504 </td>
+   <td style="text-align:right;"> 1.9877085 </td>
+   <td style="text-align:right;"> 0.5541282 </td>
+   <td style="text-align:right;"> 1.2141775 </td>
+   <td style="text-align:right;"> 1.9267091 </td>
+   <td style="text-align:right;"> 1.7777491 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10346 </td>
@@ -3711,6 +3772,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 6.5184132 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10383 </td>
+   <td style="text-align:left;"> ENSG00000238035 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0763676 </td>
+   <td style="text-align:right;"> 1.0607135 </td>
+   <td style="text-align:right;"> 1.1276508 </td>
+   <td style="text-align:right;"> 2.6968232 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1078501 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10407 </td>
    <td style="text-align:left;"> ENSG00000239665 </td>
    <td style="text-align:left;"> NA </td>
@@ -3720,6 +3792,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 17.8592020 </td>
    <td style="text-align:right;"> 16.4701519 </td>
    <td style="text-align:right;"> 8.0152779 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10423 </td>
+   <td style="text-align:left;"> ENSG00000240288 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.7865023 </td>
+   <td style="text-align:right;"> 8.8543377 </td>
+   <td style="text-align:right;"> 0.4155961 </td>
+   <td style="text-align:right;"> 0.8094517 </td>
+   <td style="text-align:right;"> 2.2478273 </td>
+   <td style="text-align:right;"> 0.9481328 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10453 </td>
+   <td style="text-align:left;"> ENSG00000241399 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.3661273 </td>
+   <td style="text-align:right;"> 1.0199091 </td>
+   <td style="text-align:right;"> 1.5766903 </td>
+   <td style="text-align:right;"> 1.1519814 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10473 </td>
@@ -3755,6 +3849,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10589 </td>
+   <td style="text-align:left;"> ENSG00000246582 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7518197 </td>
+   <td style="text-align:right;"> 0.7517152 </td>
+   <td style="text-align:right;"> 2.7387785 </td>
+   <td style="text-align:right;"> 1.4934383 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.1081302 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10594 </td>
+   <td style="text-align:left;"> ENSG00000246985 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.4600243 </td>
+   <td style="text-align:right;"> 0.9197669 </td>
+   <td style="text-align:right;"> 1.7302652 </td>
+   <td style="text-align:right;"> 1.3167081 </td>
+   <td style="text-align:right;"> 0.6390252 </td>
+   <td style="text-align:right;"> 1.1519814 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10624 </td>
+   <td style="text-align:left;"> ENSG00000248323 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 23.2245298 </td>
+   <td style="text-align:right;"> 17.3472739 </td>
+   <td style="text-align:right;"> 9.5614817 </td>
+   <td style="text-align:right;"> 6.2057961 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10638 </td>
    <td style="text-align:left;"> ENSG00000248632 </td>
    <td style="text-align:left;"> NA </td>
@@ -3764,6 +3891,61 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 6.3083267 </td>
    <td style="text-align:right;"> 13.1658458 </td>
    <td style="text-align:right;"> 1.3072381 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10642 </td>
+   <td style="text-align:left;"> ENSG00000248975 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.8932511 </td>
+   <td style="text-align:right;"> 1.2649054 </td>
+   <td style="text-align:right;"> 1.3091278 </td>
+   <td style="text-align:right;"> 1.2290175 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 0.7110996 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10649 </td>
+   <td style="text-align:left;"> ENSG00000249476 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 10.2039056 </td>
+   <td style="text-align:right;"> 0.9035038 </td>
+   <td style="text-align:right;"> 6.3807860 </td>
+   <td style="text-align:right;"> 0.6772412 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10652 </td>
+   <td style="text-align:left;"> ENSG00000249646 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1895128 </td>
+   <td style="text-align:right;"> 1.1384148 </td>
+   <td style="text-align:right;"> 1.0251371 </td>
+   <td style="text-align:right;"> 1.6769140 </td>
+   <td style="text-align:right;"> 2.1707590 </td>
+   <td style="text-align:right;"> 0.7028035 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10680 </td>
+   <td style="text-align:left;"> ENSG00000250790 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0168176 </td>
+   <td style="text-align:right;"> 1.0842046 </td>
+   <td style="text-align:right;"> 1.1041004 </td>
+   <td style="text-align:right;"> 0.7892154 </td>
+   <td style="text-align:right;"> 1.3165846 </td>
+   <td style="text-align:right;"> 0.7679876 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10712 </td>
+   <td style="text-align:left;"> ENSG00000253715 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.2520404 </td>
+   <td style="text-align:right;"> 1.2034671 </td>
+   <td style="text-align:right;"> 1.0514582 </td>
+   <td style="text-align:right;"> 1.1642613 </td>
+   <td style="text-align:right;"> 2.1097465 </td>
+   <td style="text-align:right;"> 1.5087164 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10735 </td>
@@ -3821,6 +4003,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 8.8887453 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10839 </td>
+   <td style="text-align:left;"> ENSG00000257802 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.1263790 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 2.6981722 </td>
+   <td style="text-align:right;"> 2.8900637 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10852 </td>
+   <td style="text-align:left;"> ENSG00000258285 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.9754169 </td>
+   <td style="text-align:right;"> 2.4935768 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10854 </td>
    <td style="text-align:left;"> ENSG00000258297 </td>
    <td style="text-align:left;"> NA </td>
@@ -3830,6 +4034,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 26.3503501 </td>
    <td style="text-align:right;"> 34.7192986 </td>
    <td style="text-align:right;"> 43.9151423 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10876 </td>
+   <td style="text-align:left;"> ENSG00000258733 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.3820031 </td>
+   <td style="text-align:right;"> 1.4456062 </td>
+   <td style="text-align:right;"> 1.2467884 </td>
+   <td style="text-align:right;"> 4.5868928 </td>
+   <td style="text-align:right;"> 2.8900637 </td>
+   <td style="text-align:right;"> 2.4888487 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10880 </td>
@@ -3843,6 +4058,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 9.9779129 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 10891 </td>
+   <td style="text-align:left;"> ENSG00000259242 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1910015 </td>
+   <td style="text-align:right;"> 2.3491100 </td>
+   <td style="text-align:right;"> 2.4935768 </td>
+   <td style="text-align:right;"> 1.3490861 </td>
+   <td style="text-align:right;"> 2.2478273 </td>
+   <td style="text-align:right;"> 2.6073653 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10915 </td>
+   <td style="text-align:left;"> ENSG00000259673 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.6376271 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 4.1480811 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10916 </td>
+   <td style="text-align:left;"> ENSG00000259699 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3651855 </td>
+   <td style="text-align:right;"> 1.0860116 </td>
+   <td style="text-align:right;"> 1.1692105 </td>
+   <td style="text-align:right;"> 1.1777522 </td>
+   <td style="text-align:right;"> 0.8284849 </td>
+   <td style="text-align:right;"> 0.3875493 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 10919 </td>
    <td style="text-align:left;"> ENSG00000259834 </td>
    <td style="text-align:left;"> NA </td>
@@ -3852,6 +4100,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 16.0541248 </td>
    <td style="text-align:right;"> 17.3403822 </td>
    <td style="text-align:right;"> 11.0232293 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10925 </td>
+   <td style="text-align:left;"> ENSG00000259926 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.1488752 </td>
+   <td style="text-align:right;"> 0.9035038 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 0.2698172 </td>
+   <td style="text-align:right;"> 2.5689455 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10941 </td>
+   <td style="text-align:left;"> ENSG00000260097 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 7.1415429 </td>
+   <td style="text-align:right;"> 4.8608507 </td>
+   <td style="text-align:right;"> 0.0027706 </td>
+   <td style="text-align:right;"> 5.0739129 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 5.6816860 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 10944 </td>
+   <td style="text-align:left;"> ENSG00000260212 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.1910015 </td>
+   <td style="text-align:right;"> 2.1684092 </td>
+   <td style="text-align:right;"> 4.4330254 </td>
+   <td style="text-align:right;"> 6.0708875 </td>
+   <td style="text-align:right;"> 2.8900637 </td>
+   <td style="text-align:right;"> 2.3181848 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 10952 </td>
@@ -3909,6 +4190,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 1.0702049 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11012 </td>
+   <td style="text-align:left;"> ENSG00000261599 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.1125390 </td>
+   <td style="text-align:right;"> 1.6805172 </td>
+   <td style="text-align:right;"> 1.7330359 </td>
+   <td style="text-align:right;"> 2.5254892 </td>
+   <td style="text-align:right;"> 0.4238760 </td>
+   <td style="text-align:right;"> 2.4343310 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11029 </td>
+   <td style="text-align:left;"> ENSG00000261879 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.9662000 </td>
+   <td style="text-align:right;"> 1.9877085 </td>
+   <td style="text-align:right;"> 0.2770641 </td>
+   <td style="text-align:right;"> 1.3490861 </td>
+   <td style="text-align:right;"> 1.7308270 </td>
+   <td style="text-align:right;"> 1.4221992 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11042 </td>
    <td style="text-align:left;"> ENSG00000262621 </td>
    <td style="text-align:left;"> NA </td>
@@ -3920,6 +4223,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11100 </td>
+   <td style="text-align:left;"> ENSG00000265566 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4053818 </td>
+   <td style="text-align:right;"> 0.8348376 </td>
+   <td style="text-align:right;"> 0.5541282 </td>
+   <td style="text-align:right;"> 1.2141775 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.0263538 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11172 </td>
    <td style="text-align:left;"> ENSG00000267654 </td>
    <td style="text-align:left;"> NA </td>
@@ -3929,6 +4243,50 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 3.3727153 </td>
    <td style="text-align:right;"> 5.1378910 </td>
    <td style="text-align:right;"> 1.1851660 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11173 </td>
+   <td style="text-align:left;"> ENSG00000267666 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.5955008 </td>
+   <td style="text-align:right;"> 2.1178130 </td>
+   <td style="text-align:right;"> 1.8632560 </td>
+   <td style="text-align:right;"> 1.4934383 </td>
+   <td style="text-align:right;"> 1.2844728 </td>
+   <td style="text-align:right;"> 1.4269399 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11174 </td>
+   <td style="text-align:left;"> ENSG00000267672 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0451038 </td>
+   <td style="text-align:right;"> 3.9609609 </td>
+   <td style="text-align:right;"> 1.5238525 </td>
+   <td style="text-align:right;"> 4.8958335 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 0.5937682 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11178 </td>
+   <td style="text-align:left;"> ENSG00000267750 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.7339547 </td>
+   <td style="text-align:right;"> 1.7491834 </td>
+   <td style="text-align:right;"> 0.8339629 </td>
+   <td style="text-align:right;"> 2.7170594 </td>
+   <td style="text-align:right;"> 1.6055909 </td>
+   <td style="text-align:right;"> 1.6485660 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11188 </td>
+   <td style="text-align:left;"> ENSG00000268061 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 6.0227566 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 5.2115197 </td>
+   <td style="text-align:right;"> 1.4610878 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11191 </td>
@@ -3986,6 +4344,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 1.9211541 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11265 </td>
+   <td style="text-align:left;"> ENSG00000270885 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.2073778 </td>
+   <td style="text-align:right;"> 1.9407263 </td>
+   <td style="text-align:right;"> 1.2370912 </td>
+   <td style="text-align:right;"> 0.5544744 </td>
+   <td style="text-align:right;"> 0.8445408 </td>
+   <td style="text-align:right;"> 0.8628009 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11274 </td>
    <td style="text-align:left;"> ENSG00000271430 </td>
    <td style="text-align:left;"> NA </td>
@@ -3995,6 +4364,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 13.6257698 </td>
    <td style="text-align:right;"> 2.1065353 </td>
    <td style="text-align:right;"> 10.4792381 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11278 </td>
+   <td style="text-align:left;"> ENSG00000271553 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 8.1881355 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 2.7706409 </td>
+   <td style="text-align:right;"> 3.1028981 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.7777491 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11284 </td>
@@ -4041,6 +4421,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11309 </td>
+   <td style="text-align:left;"> ENSG00000272345 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 2.2777904 </td>
+   <td style="text-align:right;"> 0.4752430 </td>
+   <td style="text-align:right;"> 4.1434935 </td>
+   <td style="text-align:right;"> 3.2270140 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.7490249 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11323 </td>
    <td style="text-align:left;"> ENSG00000272579 </td>
    <td style="text-align:left;"> NA </td>
@@ -4050,6 +4441,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 18.9249801 </td>
    <td style="text-align:right;"> 26.7138222 </td>
    <td style="text-align:right;"> 17.1647597 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11331 </td>
+   <td style="text-align:left;"> ENSG00000272702 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0257501 </td>
+   <td style="text-align:right;"> 0.7282241 </td>
+   <td style="text-align:right;"> 1.8868064 </td>
+   <td style="text-align:right;"> 1.6877067 </td>
+   <td style="text-align:right;"> 0.3211182 </td>
+   <td style="text-align:right;"> 0.9481328 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11344 </td>
@@ -4074,6 +4476,39 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.0000000 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11362 </td>
+   <td style="text-align:left;"> ENSG00000273145 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.2977504 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 1.6623845 </td>
+   <td style="text-align:right;"> 2.2934464 </td>
+   <td style="text-align:right;"> 1.9267091 </td>
+   <td style="text-align:right;"> 0.1185166 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11381 </td>
+   <td style="text-align:left;"> ENSG00000273373 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 21.1419900 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 4.3170756 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 5.4517638 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11390 </td>
+   <td style="text-align:left;"> ENSG00000273729 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.3007279 </td>
+   <td style="text-align:right;"> 7.1973116 </td>
+   <td style="text-align:right;"> 2.4949621 </td>
+   <td style="text-align:right;"> 0.6300232 </td>
+   <td style="text-align:right;"> 4.4956547 </td>
+   <td style="text-align:right;"> 10.6048657 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11410 </td>
    <td style="text-align:left;"> ENSG00000274627 </td>
    <td style="text-align:left;"> NA </td>
@@ -4083,6 +4518,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 9.4409047 </td>
    <td style="text-align:right;"> 0.0000000 </td>
    <td style="text-align:right;"> 14.2753249 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11412 </td>
+   <td style="text-align:left;"> ENSG00000274860 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.4128256 </td>
+   <td style="text-align:right;"> 0.6685928 </td>
+   <td style="text-align:right;"> 0.2355045 </td>
+   <td style="text-align:right;"> 0.8836514 </td>
+   <td style="text-align:right;"> 0.6422364 </td>
+   <td style="text-align:right;"> 1.4020514 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11413 </td>
@@ -4096,6 +4542,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 4.7797746 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11427 </td>
+   <td style="text-align:left;"> ENSG00000275318 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 3.2752542 </td>
+   <td style="text-align:right;"> 1.8070077 </td>
+   <td style="text-align:right;"> 3.1862370 </td>
+   <td style="text-align:right;"> 0.1322104 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 2.9629151 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11470 </td>
+   <td style="text-align:left;"> ENSG00000277151 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 6.8482588 </td>
+   <td style="text-align:right;"> 0.1807008 </td>
+   <td style="text-align:right;"> 0.2770641 </td>
+   <td style="text-align:right;"> 0.5396344 </td>
+   <td style="text-align:right;"> 17.6615004 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11473 </td>
    <td style="text-align:left;"> ENSG00000277203 </td>
    <td style="text-align:left;"> NA </td>
@@ -4105,6 +4573,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 3.7774411 </td>
    <td style="text-align:right;"> 1.2844728 </td>
    <td style="text-align:right;"> 3.0553580 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11481 </td>
+   <td style="text-align:left;"> ENSG00000277767 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.0227726 </td>
+   <td style="text-align:right;"> 0.8691707 </td>
+   <td style="text-align:right;"> 1.2454031 </td>
+   <td style="text-align:right;"> 1.5865253 </td>
+   <td style="text-align:right;"> 0.9633546 </td>
+   <td style="text-align:right;"> 1.6141961 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11521 </td>
@@ -4129,6 +4608,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 23.8005044 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11537 </td>
+   <td style="text-align:left;"> ENSG00000279127 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.6848259 </td>
+   <td style="text-align:right;"> 1.1040817 </td>
+   <td style="text-align:right;"> 0.8284216 </td>
+   <td style="text-align:right;"> 1.7146885 </td>
+   <td style="text-align:right;"> 0.8509632 </td>
+   <td style="text-align:right;"> 1.7018984 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11539 </td>
+   <td style="text-align:left;"> ENSG00000279145 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.1488752 </td>
+   <td style="text-align:right;"> 3.7947162 </td>
+   <td style="text-align:right;"> 0.1385320 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11546 </td>
    <td style="text-align:left;"> ENSG00000279184 </td>
    <td style="text-align:left;"> NA </td>
@@ -4151,6 +4652,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.4693258 </td>
   </tr>
   <tr>
+   <td style="text-align:left;"> 11550 </td>
+   <td style="text-align:left;"> ENSG00000279202 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.9472875 </td>
+   <td style="text-align:right;"> 0.7191891 </td>
+   <td style="text-align:right;"> 0.9794216 </td>
+   <td style="text-align:right;"> 0.8094517 </td>
+   <td style="text-align:right;"> 1.0340006 </td>
+   <td style="text-align:right;"> 3.4357963 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11555 </td>
+   <td style="text-align:left;"> ENSG00000279281 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 0.5955008 </td>
+   <td style="text-align:right;"> 0.5583654 </td>
+   <td style="text-align:right;"> 2.7692556 </td>
+   <td style="text-align:right;"> 5.3113521 </td>
+   <td style="text-align:right;"> 3.8534183 </td>
+   <td style="text-align:right;"> 2.3703321 </td>
+  </tr>
+  <tr>
    <td style="text-align:left;"> 11564 </td>
    <td style="text-align:left;"> ENSG00000279380 </td>
    <td style="text-align:left;"> NA </td>
@@ -4171,6 +4694,28 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 0.8404807 </td>
    <td style="text-align:right;"> 4.7653939 </td>
    <td style="text-align:right;"> 3.0743207 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11569 </td>
+   <td style="text-align:left;"> ENSG00000279412 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.3398767 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 1.1082564 </td>
+   <td style="text-align:right;"> 3.1028981 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.5554981 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11589 </td>
+   <td style="text-align:left;"> ENSG00000279549 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.5959420 </td>
+   <td style="text-align:right;"> 1.0860116 </td>
+   <td style="text-align:right;"> 1.3936324 </td>
+   <td style="text-align:right;"> 0.6003433 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 3.2035038 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11609 </td>
@@ -4204,6 +4749,17 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
    <td style="text-align:right;"> 4.8836918 </td>
    <td style="text-align:right;"> 2.3120510 </td>
    <td style="text-align:right;"> 0.2370332 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 11629 </td>
+   <td style="text-align:left;"> ENSG00000279960 </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1.2445966 </td>
+   <td style="text-align:right;"> 1.7401484 </td>
+   <td style="text-align:right;"> 1.3049719 </td>
+   <td style="text-align:right;"> 1.2654428 </td>
+   <td style="text-align:right;"> 0.3243294 </td>
+   <td style="text-align:right;"> 0.6850260 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 11631 </td>
@@ -4329,12 +4885,6 @@ kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
 </tbody>
 </table>
 
-<!-- rnb-chunk-end -->
-
-
-<!-- rnb-text-begin -->
-
-
 Future development of such a study may involve investigating the ID mappings, how they changed and for what reasons.
 
 ## Additional Notes
@@ -4353,6 +4903,3 @@ Future development of such a study may involve investigating the ID mappings, ho
 
 ::: {#refs}
 :::
-
-<!-- rnb-text-end -->
-

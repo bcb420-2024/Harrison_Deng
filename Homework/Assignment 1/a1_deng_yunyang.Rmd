@@ -103,15 +103,15 @@ if(length(missing_files) >0){
 The metadata here contains all the information regarding each samples. Data is displayed using knitr [@xieKnitrComprehensiveTool2014].
 
 ```{r}
-controller_vs_art_metadata <- read.table(
+art_v_ec_meta <- read.table(
   file.path(download_dir,data_set_geoid, "GSE196549_GEO.metadata.tsv.gz"),
   header=TRUE,
   check.names=TRUE
   )
-controller_vs_art_metadata <- controller_vs_art_metadata[,-c(1)] # Delete duplicate column
-row.names(controller_vs_art_metadata) <- controller_vs_art_metadata[,1]
-dim(controller_vs_art_metadata)
-kable(controller_vs_art_metadata[1:8,], format = "html")
+art_v_ec_meta <- art_v_ec_meta[,-c(1)] # Delete duplicate column
+row.names(art_v_ec_meta) <- art_v_ec_meta[,1]
+dim(art_v_ec_meta)
+kable(art_v_ec_meta[1:8,], format = "html")
 ```
 
 Note that there are 3 replicates for each patient. Replicates were consistent across all patients and contributed to the reliability of the data and therefore not manually removed.
@@ -153,14 +153,14 @@ kable(controller_vs_art_expr[1:8,1:4], format = "html")
 The following shows the different number of samples for the different sample sources.
 
 ```{r}
-controller_vs_art_metadata <- data.table::data.table(controller_vs_art_metadata)
-controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Source]
+art_v_ec_meta <- data.table::data.table(art_v_ec_meta)
+art_v_ec_meta[, .(count = .N), by = art_v_ec_meta$Source]
 ```
 
 The following shows the different number of samples for the different phenotypes.
 
 ```{r}
-controller_vs_art_metadata[, .(count = .N), by = controller_vs_art_metadata$Phenotype]
+art_v_ec_meta[, .(count = .N), by = art_v_ec_meta$Phenotype]
 ```
 
 ## Visualizing Expression Data
@@ -260,17 +260,17 @@ By doing so, we see we've reduced the variation at the points where there is an 
 We will now apply trimmed mean of m-values or TMM to normalize the data further. We choose to apply TMM as we expect that most genes are not differentially. expressed. Furthermore, as the process to procure this data contains many technically based areas of potentially introducing variation, TMM may help by trimming off extreme values likely caused by technical variation.
 
 ```{r}
-phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
+phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=art_v_ec_meta$Phenotype)
 phenotype_dge <- calcNormFactors(phenotype_dge)
-normed_controller_vs_art <- cpm(phenotype_dge)
+n_ctrl_vs_art <- cpm(phenotype_dge)
 ```
 
 ```{r}
 par(mfrow=c(2, 2))
 density_plot(filtered_controller_vs_art_expr, "Original")
-density_plot(normed_controller_vs_art, "TMM")
+density_plot(n_ctrl_vs_art, "TMM")
 center_deviation_plot(log2(filtered_controller_vs_art_expr), "Original")
-center_deviation_plot(log2(normed_controller_vs_art), "TMM")
+center_deviation_plot(log2(n_ctrl_vs_art), "TMM")
 par(mfrow=c(1, 1))
 ```
 
@@ -284,9 +284,9 @@ To start, we will color the points first based on the source of the sample. The 
 
 ```{r}
 
-plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
+plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(art_v_ec_meta$Source)])
 legend("topright",
-  legend=levels(factor(controller_vs_art_metadata$Source)),
+  legend=levels(factor(art_v_ec_meta$Source)),
   pch=c(1), col= c("red","blue"),title="Class",
   bty = 'n', cex = 0.75)
 ```
@@ -297,9 +297,9 @@ To continue, let's color based on the phenotype of the sample.
 
 ```{r}
 
-plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
+plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(art_v_ec_meta$Phenotype)])
 legend("topright",
-  legend=levels(factor(controller_vs_art_metadata$Phenotype)),
+  legend=levels(factor(art_v_ec_meta$Phenotype)),
   pch=c(1), col=
 c("red","orange","purple"),title="Class",
   bty = 'n', cex = 0.75)
@@ -317,7 +317,7 @@ Interpreting results was based on separate review material [@fullerMolecularClas
 Shows the variability of gene expression relative to the mean for a given counts per million (CPM). Biological Coefficient of Variation (BCV) was plotted with edgeR [@chenEdgeRPowerfulDifferential2024].
 
 ```{r}
-model_design <- model.matrix(~controller_vs_art_metadata$Phenotype+controller_vs_art_metadata$Source)
+model_design <- model.matrix(~art_v_ec_meta$Phenotype+art_v_ec_meta$Source)
 phenotype_dge <- estimateDisp(phenotype_dge, model_design)
 plotBCV(phenotype_dge, col.tagwise = "black",col.common = "red",)
 ```
@@ -339,14 +339,14 @@ We will remap all given Ensembl Stable IDs to HUGO maps to ensure IDs are correc
 
 ```{r}
 
-ensembl = useDataset("hsapiens_gene_ensembl",mart=useMart("ensembl"))
+ensembl <- useDataset("hsapiens_gene_ensembl",mart=useMart("ensembl"))
 
 
-ids2convert <- lapply(rownames(normed_controller_vs_art), FUN = function(x) {
+ids2convert <- lapply(row.names(n_ctrl_vs_art), FUN = function(x) {
   return(unlist(str_split(x, "_"))[[1]])
 })
-
-rownames(normed_controller_vs_art) <- ids2convert
+ensembl_id_n_ctrl_vs_art <- n_ctrl_vs_art
+row.names(ensembl_id_n_ctrl_vs_art) <- ids2convert
 
 conversion_cache <- "id_conversion.rds"
 
@@ -363,22 +363,22 @@ if (file.exists(conversion_cache_file)) {
   saveRDS(id_conversion, conversion_cache_file)
 }
 
-reannot_norm_controller_vs_art <- merge(
+annot_n_ec_v_art <- merge(
   x = id_conversion,
-  y = normed_controller_vs_art,
+  y = ensembl_id_n_ctrl_vs_art,
   by.x = 1,
   by.y = 0,
   all.y = TRUE
 )
 
-kable(reannot_norm_controller_vs_art[1:8,1:8], format = "html")
+kable(annot_n_ec_v_art[1:8,1:8], format = "html")
 ```
 
 There were a few symbols that were not successfully matched. Let's take a look.
 
 ```{r}
-missing_hugo_norm_controller_vs_art <- reannot_norm_controller_vs_art[
-  is.na(reannot_norm_controller_vs_art$hgnc_symbol),
+missing_hugo_norm_controller_vs_art <- annot_n_ec_v_art[
+  is.na(annot_n_ec_v_art$hgnc_symbol),
 ]
 kable(missing_hugo_norm_controller_vs_art[,1:8], format = "html")
 ```
