@@ -260,9 +260,9 @@ By doing so, we see we've reduced the variation at the points where there is an 
 We will now apply trimmed mean of m-values or TMM to normalize the data further. We choose to apply TMM as we expect that most genes are not differentially. expressed. Furthermore, as the process to procure this data contains many technically based areas of potentially introducing variation, TMM may help by trimming off extreme values likely caused by technical variation.
 
 ```{r}
-d <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
-d <- calcNormFactors(d)
-normed_controller_vs_art <- cpm(d)
+phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
+phenotype_dge <- calcNormFactors(phenotype_dge)
+normed_controller_vs_art <- cpm(phenotype_dge)
 ```
 
 ```{r}
@@ -284,7 +284,7 @@ To start, we will color the points first based on the source of the sample. The 
 
 ```{r}
 
-plotMDS(d, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
+plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
 legend("topright",
   legend=levels(factor(controller_vs_art_metadata$Source)),
   pch=c(1), col= c("red","blue"),title="Class",
@@ -297,7 +297,7 @@ To continue, let's color based on the phenotype of the sample.
 
 ```{r}
 
-plotMDS(d, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
+plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
 legend("topright",
   legend=levels(factor(controller_vs_art_metadata$Phenotype)),
   pch=c(1), col=
@@ -318,14 +318,14 @@ Shows the variability of gene expression relative to the mean for a given counts
 
 ```{r}
 model_design <- model.matrix(~controller_vs_art_metadata$Phenotype+controller_vs_art_metadata$Source)
-d <- estimateDisp(d, model_design)
-plotBCV(d, col.tagwise = "black",col.common = "red",)
+phenotype_dge <- estimateDisp(phenotype_dge, model_design)
+plotBCV(phenotype_dge, col.tagwise = "black",col.common = "red",)
 ```
 
 The produced figure indicates that for more highly expressed genes, the biological coefficient of variation decreases. This trend only seems to occur after approximately 3 $\logCPM$. This may further be interpreted to indicating there is a decrease in the number of differential genes as the expression counts increase. The following plot was generated with use of edgeR [@chenEdgeRPowerfulDifferential2024].
 
 ```{r}
-plotMeanVar(d, show.raw.vars = TRUE,
+plotMeanVar(phenotype_dge, show.raw.vars = TRUE,
   show.tagwise.vars=TRUE, NBline=TRUE,
   show.ave.raw.vars = TRUE,show.binned.common.disp.vars
 = TRUE)

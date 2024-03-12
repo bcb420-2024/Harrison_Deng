@@ -1,0 +1,177 @@
+---
+title: "Assignment 2"
+author: "Harrison Deng"
+date: "`r Sys.Date()`"
+output: html_notebook
+---
+
+```{r}
+library("GEOquery")
+library("knitr")
+library("edgeR")
+library("stringr")
+library("limma")
+```
+
+Loading environment from assignment 1.
+
+```{r}
+if (basename(getwd()) == "Homework") {
+  setwd("./Assignment 2")
+}
+part_a1_dir <- file.path(dirname(getwd()), "Assignment 1")
+part_a1_filename <- "a1_deng_yunyang.Rmd"
+part_a1_out <- "a1_deng_yunyang.nb.html"
+
+knit(file.path(part_a1_dir, part_a1_filename),
+     output = file.path(getwd(), part_a1_out))
+```
+
+# Summary 
+
+
+## Data set
+
+The gene expression analysis will be performed on the normalized dataset 
+generated in the previous assignment (#1). Aforementioned data set was procured 
+from the Gene Expression Omnibus (GEO) with `r data_set_geoid`. The dataset 
+contains a variety of categories to stratify upon and categorize for testing. 
+The variables used in the previous assignment and the variables we will continue 
+to use in this assignment are the phenotype categories which designates if the 
+patient sample is from a patient who has undergone antiretroviral therapy (ART), 
+is an elite controller with no signs of viremia (EC), or a viremic controller 
+with very low signs of viremia (VC). More specifically, there were $6$ patient 
+samples, $18$ and $24$ respectively.
+
+## Data set Pre-processing
+
+The dataset was pre-processed via filtering out genes based on patient sample 
+counts where the sum of counts per million (CPM) over patient samples must have 
+been greater than $30$.
+
+Duplicate rows with exact same values were simply and trivially deleted from the
+ dataset. This reduced the number of genes (rows) by $14$.
+
+The same dataset was than normalized via trimmed mean of m-values (TMM). TMM was
+used as we expect that most genes would not be differentially expressed. 
+Furthermore, with TMM, we hoped to reduce technical variation as the process of 
+recording gene expression is very complex with many steps that may introduce 
+such variation.
+
+## Preliminary Analysis
+
+The resulting data was pre-emptively analysed at this stage via multidimensional 
+scaling plots (MDS). The produced plot generated 3 groupings where one group was 
+entirely VCs, another was primarily EC and VC, and the last was a mixture of EC, 
+and ART patients.
+
+A dispersion analysis via biological coefficient of variation (BCV) indicated 
+that the produced pre-processed dataset shows that as gene expression increases, 
+the biological coefficient of variation decreases approximately after 
+$3\log CPM$. This result was validated by plotting the mean variance and seeing 
+that the data largely follows the negative binomial distribution.
+
+# Gene Expression Differential Analysis
+
+This section will contain steps for the following (take from the assignment 
+outline):
+
+1. Calculate p-values for each of the genes in your expression set. How many 
+genes were significantly differentially expressed? What thresholds did you use 
+and why?
+
+2. Multiple hypothesis testing - correct your p-values using a multiple 
+hypothesis correction method. Which method did you use? And Why? How many genes 
+passed correction?
+
+3. Show the amount of differentially expressed genes using an MA Plot or a 
+Volcano plot. Highlight genes of interest.
+
+4. Visualize your top hits using a heatmap. Do you conditions cluster together? 
+Explain why or why not.
+
+Make sure all your figures have proper heading and labels. Every figure included 
+in the report should have a detailed figure legend.
+
+## Calculating P-Values
+
+Let's review the data we have currently from assignment 1 (filtered and 
+normalized).
+
+```{r}
+kable(normed_controller_vs_art[1:8, 1:8])
+t(controller_vs_art_metadata[1,])
+```
+
+Recall that samples are the columns and rows are the genes. Next, we will look 
+at the MDS plots color coded by patients and phenotype. This seems to indicate 
+the two patients 
+
+```{r}
+
+phenotype_dge_mds_by <- function(classification_var, title, dge) {
+  class_factors <- factor(classification_var)
+  col <- c(rainbow(length(unique(classification_var))))
+  class_col <- col[class_factors]
+
+  limma::plotMDS(dge, labels = NULL, pch = 1, col = class_col)
+
+  legend("topright", legend = levels(class_factors),
+         pch = c(1), col = col, title = title,
+         bty = "n", cex = 0.75)
+
+}
+
+par(mfrow = c(2, 3))
+phenotype_dge_mds_by(controller_vs_art_metadata$Patient, "Patient", phenotype_dge)
+phenotype_dge_mds_by(controller_vs_art_metadata$Phenotype, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(controller_vs_art_metadata$Source, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(controller_vs_art_metadata$Sex, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(controller_vs_art_metadata$Race, "Phenotype", phenotype_dge)
+phenotype_dge_mds_by(controller_vs_art_metadata$Age, "Phenotype", phenotype_dge)
+par(mfrow = c(1, 1))
+```
+
+Immediately, it is apparent that the sex, race, age and phenotype seem to have 
+some influence on the genetic expression. To elaborate, the clustering when 
+colouring based on sex and race show to very apparent groups. Furthermore, 
+samples from similar patients are clearly similar Lastly, the clustering on the 
+phenotype also seems rather distinct and forms interesting intersections with
+each other. Since we are interested in the associations between gene expression 
+and phenotypic outcome, that is to say, we are interested in how gene 
+expressions may be linked to HIV severity outcome, we will elect to look at the 
+phenotype category more.
+
+```{r}
+model_design_pat <- model.matrix(~ controller_vs_art_metadata$Phenotype)
+model_design_pat
+
+fit_phenotype_dge <- glmQLFit(phenotype_dge, model_design_pat)
+```
+
+Specifically, the reference category will be the ART samples while we will test 
+the elite controllers.
+
+```{r}
+coefficent_col <- "controller_vs_art_metadata$PhenotypeEC"
+
+qlf.ARTvsEC  <- glmQLFTest(fit_phenotype_dge, coef = coefficent_col)
+
+qlf_output_hits <- topTags(qlf.ARTvsEC, sort.by = "PValue",
+                           n = nrow(normed_controller_vs_art))
+```
+
+We will let $\alpha = 0.05$. Thus, the following demonstrates the number of 
+samples with p-values below 0.05.
+
+```{r}
+length(which(qlf_output_hits$table$PValue < 0.05))
+```
+
+Furthermore, the following demonstrates the amount passing multiple tests 
+correction as follows.
+
+```{r}
+length(which(qlf_output_hits$table$FDR < 0.05))
+```
+

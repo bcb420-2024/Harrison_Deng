@@ -1574,9 +1574,9 @@ We will now apply trimmed mean of m-values or TMM to normalize the data further.
 
 
 ```r
-dge <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
-dge <- calcNormFactors(dge)
-normed_controller_vs_art <- cpm(dge)
+phenotype_dge <- DGEList(counts=filtered_controller_vs_art_expr, group=controller_vs_art_metadata$Phenotype)
+phenotype_dge <- calcNormFactors(phenotype_dge)
+normed_controller_vs_art <- cpm(phenotype_dge)
 ```
 
 
@@ -2087,7 +2087,7 @@ To start, we will color the points first based on the source of the sample. The 
 
 
 ```r
-plotMDS(dge, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
+plotMDS(phenotype_dge, labels=NULL, pch = 1, col = c("red","blue")[factor(controller_vs_art_metadata$Source)])
 legend("topright",
   legend=levels(factor(controller_vs_art_metadata$Source)),
   pch=c(1), col= c("red","blue"),title="Class",
@@ -2102,7 +2102,7 @@ To continue, let's color based on the phenotype of the sample.
 
 
 ```r
-plotMDS(dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
+plotMDS(phenotype_dge, labels=NULL,pch=1, col = c("red","orange","purple")[factor(controller_vs_art_metadata$Phenotype)])
 legend("topright",
   legend=levels(factor(controller_vs_art_metadata$Phenotype)),
   pch=c(1), col=
@@ -2125,8 +2125,8 @@ Shows the variability of gene expression relative to the mean for a given counts
 
 ```r
 model_design <- model.matrix(~controller_vs_art_metadata$Phenotype+controller_vs_art_metadata$Source)
-dge <- estimateDisp(dge, model_design)
-plotBCV(dge, col.tagwise = "black",col.common = "red",)
+phenotype_dge <- estimateDisp(phenotype_dge, model_design)
+plotBCV(phenotype_dge, col.tagwise = "black",col.common = "red",)
 ```
 
 ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19-1.png)
@@ -2135,7 +2135,7 @@ The produced figure indicates that for more highly expressed genes, the biologic
 
 
 ```r
-plotMeanVar(dge, show.raw.vars = TRUE,
+plotMeanVar(phenotype_dge, show.raw.vars = TRUE,
   show.tagwise.vars=TRUE, NBline=TRUE,
   show.ave.raw.vars = TRUE,show.binned.common.disp.vars
 = TRUE)
